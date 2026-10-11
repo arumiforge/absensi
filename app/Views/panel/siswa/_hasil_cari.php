@@ -20,7 +20,7 @@ $batas = \App\Services\MasterData\DaftarSiswa::BATAS_CARI;
 <?php foreach ($rows as $row): ?>
     <li class="list-group-item">
         <a class="d-flex align-items-center gap-2" href="<?= esc(url_to('panel.siswa.lihat', $row['id']), 'attr') ?>">
-            <?= view('komponen/foto_siswa', ['name' => $row['nama'], 'src' => null], ['saveData' => false]) ?>
+            <?= view('komponen/foto_siswa', ['name' => $row['nama'], 'src' => $row['foto_file'] === null ? null : url_to('panel.siswa_foto.index', $row['id']) . '?ukuran=kecil'], ['saveData' => false]) ?>
             <span><?= esc($row['nama']) ?> · <?= esc($row['nisn']) ?> · <?= $row['rombel_nama'] === null ? 'Tanpa kelas' : 'Kelas ' . esc($row['rombel_nama']) ?><?= $row['status'] === 'aktif' ? '' : ' · ' . esc($label[$row['status']]) ?></span>
         </a>
     </li>

@@ -1,8 +1,9 @@
 <?php
 /**
  * Student profile, tab "Profil" (docs/09 HAL-MD-06, docs/04 FS-MD-04 item
- * 6). Buttons by right; pages of later phases (photo, presensi manual,
- * izin) get their buttons when their routes exist.
+ * 6). Buttons by right; pages of later phases (presensi manual, izin)
+ * get their buttons when their routes exist. The photo button follows
+ * HA-MD-07 with its scope (docs/04 FS-MD-07).
  *
  * @var array<string, mixed>                                      $siswa
  * @var string                                                    $status     siswa.status code today
@@ -20,6 +21,9 @@ $ikon   = static fn (string $name): string => view('komponen/ikon', ['name' => $
 $kosong = '<span class="text-body-secondary">Belum diisi</span>';
 $teks   = static fn (?string $v): string => $v === null || $v === '' ? $kosong : esc($v);
 $id     = (int) $siswa['id'];
+$adaFoto = ($siswa['foto_file'] ?? '') !== '';
+// HA-MD-07: admin for all students, wali kelas for their rombel (FS-MD-07).
+$bolehFoto = service('akunAktif')->boleh('HA-MD-07', ['siswa_id' => $id, 'rombel_id' => $rombel === null ? null : (int) $rombel['id']]);
 ?>
 <?= $this->extend('layout/panel') ?>
 
@@ -49,6 +53,9 @@ $id     = (int) $siswa['id'];
 <?php if ($hak['wa']): ?>
     <a class="btn btn-outline-primary" href="<?= esc(url_to('panel.siswa_wa.ubah', $id), 'attr') ?>"><?= $ikon('pencil') ?> Ubah nomor WA</a>
 <?php endif ?>
+<?php if ($bolehFoto): ?>
+    <a class="btn btn-outline-primary" href="<?= esc(url_to('panel.siswa_foto.ubah', $id), 'attr') ?>"><?= $ikon('camera') ?> <?= $adaFoto ? 'Ganti foto' : 'Unggah foto' ?></a>
+<?php endif ?>
 <?php if ($hak['ubah'] && $terbuka): ?>
     <a class="btn btn-outline-primary" href="<?= esc(url_to('panel.penempatan.tambah', $id), 'attr') ?>"><?= $ikon('users') ?> Pindah kelas</a>
 <?php endif ?>
@@ -64,7 +71,7 @@ $id     = (int) $siswa['id'];
 
 <div class="card card-body mb-3">
     <div class="d-flex flex-wrap gap-3">
-        <?= view('komponen/foto_siswa', ['name' => $siswa['nama'], 'src' => null, 'size' => 'profil', 'decorative' => false], ['saveData' => false]) ?>
+        <?= view('komponen/foto_siswa', ['name' => $siswa['nama'], 'src' => $adaFoto ? url_to('panel.siswa_foto.index', $id) : null, 'size' => 'profil', 'decorative' => false], ['saveData' => false]) ?>
         <dl class="row mb-0 flex-grow-1">
             <dt class="col-sm-4">NISN</dt><dd class="col-sm-8"><?= esc($siswa['nisn']) ?></dd>
             <dt class="col-sm-4">NIS</dt><dd class="col-sm-8"><?= $teks($siswa['nis']) ?></dd>

@@ -90,7 +90,7 @@ $centang = static fn (string $tanda): string => empty($saringan[$tanda]) ? '' : 
     <tbody>
 <?php foreach ($rows as $row): ?>
         <tr>
-            <td><?= view('komponen/foto_siswa', ['name' => $row['nama'], 'src' => null], ['saveData' => false]) ?></td>
+            <td><?= view('komponen/foto_siswa', ['name' => $row['nama'], 'src' => $row['foto_file'] === null ? null : url_to('panel.siswa_foto.index', $row['id']) . '?ukuran=kecil'], ['saveData' => false]) ?></td>
             <td><a href="<?= esc(url_to('panel.siswa.lihat', $row['id']), 'attr') ?>"><?= esc($row['nama']) ?></a></td>
             <td><?= esc($row['nisn']) ?></td>
             <td><?= $row['rombel_nama'] === null ? '–' : esc($row['rombel_nama']) ?></td>

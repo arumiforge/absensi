@@ -72,6 +72,11 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel', 'filter' => ['s
     $routes->get('siswa/(:num)/aktifkan', 'Siswa::formAktifkan/$1', ['as' => 'panel.siswa.form_aktifkan']);
     $routes->post('siswa/(:num)/aktifkan', 'Siswa::aktifkan/$1', ['as' => 'panel.siswa.aktifkan']);
 
+    // HAL-MD-09
+    $routes->get('siswa/(:num)/foto', 'SiswaFoto::index/$1', ['as' => 'panel.siswa_foto.index']);
+    $routes->get('siswa/(:num)/foto/ubah', 'SiswaFoto::ubah/$1', ['as' => 'panel.siswa_foto.ubah']);
+    $routes->put('siswa/(:num)/foto', 'SiswaFoto::ganti/$1', ['as' => 'panel.siswa_foto.ganti']);
+
     // HAL-MD-11, HAL-MD-12
     $routes->get('siswa/(:num)/penempatan/tambah', 'Penempatan::tambah/$1', ['as' => 'panel.penempatan.tambah']);
     $routes->post('siswa/(:num)/penempatan', 'Penempatan::simpan/$1', ['as' => 'panel.penempatan.simpan']);
