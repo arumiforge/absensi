@@ -1,0 +1,50 @@
+#--------------------------------------------------------------------
+# Spensada — production environment for https://spensada.web.id
+#
+# Copy this file to `.env` in the project root on the server:
+#   copy env-example-production .env
+# then run `php spark migrate` and `php spark admin:password`.
+#
+# The repository is public, so the encryption key is left empty here.
+# After copying, run `php spark key:generate` once on the server; it
+# writes a new key into `.env`.
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+# ENVIRONMENT
+#--------------------------------------------------------------------
+
+CI_ENVIRONMENT = production
+
+#--------------------------------------------------------------------
+# APP
+#--------------------------------------------------------------------
+
+# HTTPS only: the camera and the login cookies need it.
+app.baseURL = 'https://spensada.web.id/'
+app.forceGlobalSecureRequests = true
+
+#--------------------------------------------------------------------
+# DATABASE
+#--------------------------------------------------------------------
+
+# Laragon default MySQL account: root without a password.
+database.default.hostname = localhost
+database.default.database = absensi
+database.default.username = root
+database.default.password =
+database.default.DBDriver = App\Database\MySQLi
+database.default.port = 3306
+
+#--------------------------------------------------------------------
+# ENCRYPTION
+#--------------------------------------------------------------------
+
+encryption.key =
+
+#--------------------------------------------------------------------
+# LOGGER
+#--------------------------------------------------------------------
+
+# Warnings and errors only.
+logger.threshold = 5

@@ -27,7 +27,7 @@ composer install
 copy env .env
 ```
 
-Isi `.env`: `CI_ENVIRONMENT`, `app.baseURL` (misalnya `https://spensada.test/`), koneksi `database.default.*`, dan `encryption.key` (buat dengan `php spark key:generate`). Lalu:
+Isi `.env`: `CI_ENVIRONMENT`, `app.baseURL` (misalnya `https://spensada.test/`), koneksi `database.default.*`, dan `encryption.key` (buat dengan `php spark key:generate`). Untuk server production (`https://spensada.web.id`), pakai `copy env-example-production .env` lalu `php spark key:generate`: isi lainnya sudah siap (database `absensi`, user `root` tanpa password). Lalu:
 
 ```powershell
 php spark migrate
