@@ -34,7 +34,7 @@ Format (English, imperative, ≤ 72 chars, no trailing period):
 | `build` | Composer, vendor assets, Laragon/Nginx config |
 | `chore` | Anything else (gitignore, tooling) |
 
-Scope: the feature ID in lowercase (`akn-01`, `prs-06`), or an area (`kiosk`, `memory`, `format`). Examples:
+Scope: an area (`scan`, `rekap`, `siswa`, `libur`, `memory`, `format`). Examples:
 
 ```text
 feat(akn-01): add staff login form
@@ -65,6 +65,6 @@ user.email = arumiforge@gmail.com
 
 ## Pull requests
 
-- Title: `FASE-<NN> <phase name>`, e.g. `FASE-02 Sekolah dan siswa`.
-- Body (English): features and AC IDs covered with how each was tested, local test results (`composer test`, `node --test`), docs changed, open questions (`docs/14` RM-11).
-- No CI: the owner runs the tests in Laragon before merging (`docs/14` RM-07).
+- Title: short English summary of the change.
+- Body (English): what changed and how it was tested, local test results (`composer test`), docs changed, open questions.
+- No CI: the owner runs the tests in Laragon before merging.

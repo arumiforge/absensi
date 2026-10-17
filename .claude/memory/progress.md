@@ -1,49 +1,30 @@
 # Progress
 
-Update this file at the end of every task that changes the repo: move
-finished items to "Done", keep "Next" and "Open questions" current, and keep
-the log to the last 10 entries.
+Update this file at the end of every task that changes the repo: keep
+"Current state", "Next" and "Open questions" current, and keep the log to the
+last 10 entries.
 
-## Current state (2026-10-10)
+## Current state (2026-10-17)
 
-- FASE-02 L02-01 to L02-09 built on `claude/fase-01-akun-akses-6jkkp8` (PR "FASE-02 Sekolah dan siswa", not merged yet): master data tables, school identity + `/logo` + file serving, school years, classes and wali kelas, extra attributes, student data and search, placement, student log page, student accounts with A4 slips, portal frame and account page. Also: birth-date password rule, "Kelas yang diampu" on staff accounts, school logo on the login page and portal. 433 PHPUnit tests and 93 node tests pass locally (MySQL 8.0 sandbox).
-- FASE-01 L01-01 to L01-08 merged (PRs #19, #20): account tables, login limits, sesi/wajib-ganti filters, login/logout, change password, admin:pertama/admin:pulihkan, staff accounts, activity log, system check, panel menu. 300 PHPUnit tests and 90 node tests pass locally (MySQL 8.0 in the cloud sandbox). L01-09 kiosk prototype not started.
-- FASE-00 merged (PR #17). L00-09 run by the owner on Laragon (PHP 8.3.28, MySQL 8.4.3): `aplikasi:cek` all good, `node --test` 90 pass; `composer test` had 7 failures from the `.env` baseURL leaking into tests, fixed in the follow-up PR (owner to re-run `composer test`).
-- Discovery docs `docs/00`–`docs/15`: done (Sessions 1–11), merged in PR #14.
-- Project license: MIT, copyright Arumi Studios (D-10).
-- Owner decisions D-01 (Windows + Laragon production), D-02 (Bootstrap 5), D-04 (one PR per phase), D-05 (keep doc-defined names): confirmed and synced into `docs/` (see `decisions.md`).
-- Code: Composer appstarter, CodeIgniter 4.7.5 in `vendor/`. FASE-00 foundation: config, MySQLi driver (+07:00), `Jam`, named locks, transactions, filters and `HakAkses`, error pages, Bootstrap/font/icon assets, layouts, components, `Label.php`, `/login` view, JS format module, `pengaturan` + seeders, `aplikasi:cek`, route access and `hak` attribute tests.
-- Claude memory folder, attribution settings, brand assets: added.
-- `README.md`: project README with all implementation stages. `LICENSE`: MIT, Arumi Studios.
+- Total overhaul (D-11) on branch `sky/gracious-gates-xd73xv`: the app is now 1 admin + students + morning QR scan + manual status + holidays + daily recap (Excel, PDF) + QR cards. Spec: `docs/spesifikasi.md`. 56 PHPUnit tests pass locally (MySQL 8.0 sandbox). Browser smoke test with a fake camera feed: scan, manual status, downloads all work.
+- Everything from the old phases (accounts per role, portal, school years, placements, attributes, photos, WA, activity log, system check, login lockout, kiosk plans) and `docs/00`–`docs/15` were removed.
 
 ## Next
 
-1. Owner: tag `main` as `r1-fase-01`. Old branches were deleted by the owner on 2026-10-10; only `main` remains.
-2. L01-09 kiosk prototype: owner chose to wait (2026-10-10) until the school equipment is ready. It runs on the temporary branch `prototipe-kiosk` (not merged) and needs the school's station laptop, webcam, USB scanner and sample cards.
-3. Owner: run `composer test`, `php spark migrate` on Laragon for FASE-02, print one slip page on the school printer, then merge the FASE-02 PR. Next phase: FASE-03 (`docs/15` §7).
-4. Tests: feature tests reset `routes`, `router`, `request`, `response` in `setUp()`; a PUT sent as POST + `_method` needs `router` reset per request. Log in with `Tests\Support\AkunTrait` (`buatAkun()`, `sesiAkun()`). Parallel agents use their own test DB: `env 'database.tests.database=spensada_test_x' vendor/bin/phpunit` (NamedLockTest expects `spensada_test`). `encryption.key` is fixed in `phpunit.dist.xml`.
+1. Owner: create a fresh empty database (old tables cannot be migrated), run `php spark migrate` and `php spark admin:password` on Laragon, run `composer test`, print one page of QR cards and test scanning with the school webcam/phone over HTTPS.
 
 ## Open questions for the owner
 
-- FASE-02: a class that ever had a wali kelas cannot be deleted, because the `wali_kelas_diubah` log row references it (`log_aktivitas.rombel_id`, DB-08 RESTRICT). Keep this, or allow delete (e.g. set the log reference to NULL)?
-- FASE-02: privacy notice limit set to 2.000 characters by Claude; the live search results view lives in `panel/siswa/_hasil_cari.php` (move to `komponen/` when presensi manual and izin reuse it).
-
-- Privacy notice: the default text in `pengaturan.privasi_teks` was drafted by Claude at the owner's request. The school should review it before the R1 trial; retention, legal basis, and data officer stay open (OQ-18).
-- OQ-20 — before FASE-09: production server location (Windows VPS or school machine), approval of an ACME client such as win-acme for Let's Encrypt, and running services via Windows service + Task Scheduler instead of the Laragon app with auto-logon (`docs/07` §16.4).
-- D-07: the landscape logo says "PRIMA" — is that intended for the Spensada app?
-- D-03: approve a minifier library, or keep "vendor `.min` files only, no build step"?
-- School inputs (not urgent yet): sample cards and one station laptop for the FASE-01 kiosk prototype; OQ-08, OQ-18, OQ-19 before the R1 trial.
+- D-07: the landscape logo says "PRIMA" — it is no longer used by any page; keep or delete the file?
+- OQ-20: production server location and HTTPS certificate (the camera needs HTTPS).
 
 ## Log
 
 | Date | Branch | Work |
 |---|---|---|
-| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-02 L02-01 to L02-09 with parallel agents (resumed after an API cut-off). Lead: tables, routes, labels, menu tests, login/portal logo, birth-date password rule, homeroom column on staff accounts, slip print CSS, fixes to agent tests (JSON key order, 403 via JSON headers). |
-| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | Owner answers: SEC-03 now checks username/NISN before the common list (VAL-21 order too); self-demotion message added to `docs/11` §5.1; new key `pengaturan.privasi_teks` with a default privacy notice shown on the login page (`docs/06` §6.1, `docs/12` SEC-68, `docs/08` UI-38). |
-| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-01 L01-01 to L01-08: lead built tables, services, filters, routes, labels, menu; parallel agents built login, password, admin commands + system check, staff accounts, activity log. Added eye/eye-off/copy/lock-open icons, SecLists common-password list. |
-| 2026-10-10 | `claude/tahap-1-uh4a06` | FASE-00 follow-up: tests ignore the `.env` baseURL; owner answers synced: seed school name/address (`docs/06` §6.1), focus-ring exception (`docs/08` UI-74), `belum` code (`docs/08` §4.2), MySQL < 8.4 stays a failure; `docs/15` §12 FASE-00 row filled. |
-| 2026-10-10 | `claude/tahap-1-uh4a06` | FASE-00 L00-01 to L00-08 (parallel sub-agents per step). Helper now pre-rounds to 15 digits so 57,5% → 58% on any PHP version, and prints "Rp 0" instead of "-Rp 0". |
-| 2026-10-10 | `claude/readme-implementation-stages-87jury` | Replaced framework `README.md` with a project README (Indonesian) listing every stage from discovery to R3, from `docs/14` and `docs/15`. L00-01 and L00-09 still own later README updates. |
-| 2026-10-10 | `sky/busy-goodall-fswgci` | License decision D-10 (MIT) recorded in `docs/07`, `14`, `15`, `00` and memory. |
-| 2026-10-10 | `sky/busy-goodall-fswgci` | Owner answered D-01, D-02, D-04, D-05; synced `docs/07`, `08`, `12`, `14`, `00`, `01`, `04`, `09`. Session 11: wrote `docs/15-implementation-phases.md`. Added OQ-20. |
-| 2026-10-10 | `sky/zen-heisenberg-d72c3e` | Added `CLAUDE.md`, `.claude/memory/`, `.claude/settings.json` (no attribution, owner git identity), `format_helper.php` + test, logo/favicon/app icons. |
+| 2026-10-17 | `sky/gracious-gates-xd73xv` | Total overhaul to the minimal QR attendance app (D-11). New schema (`admin`, `siswa`, `presensi`, `libur`), Presensi service, scan page with jsQR, recap Excel/PDF, QR cards, student import, holidays, password change, `admin:password` command. Removed old features, docs, and tests. |
+| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-02 L02-01 to L02-09 (now removed by D-11). |
+| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-01 L01-01 to L01-08 (now removed by D-11). |
+| 2026-10-10 | `claude/tahap-1-uh4a06` | FASE-00 foundation: config, MySQLi driver (+07:00), error pages, Bootstrap, format helper (kept). |
+| 2026-10-10 | `sky/busy-goodall-fswgci` | License decision D-10 (MIT). |
+| 2026-10-10 | `sky/zen-heisenberg-d72c3e` | Added `CLAUDE.md`, `.claude/memory/`, `.claude/settings.json`, `format_helper.php`, logo/favicon/app icons. |

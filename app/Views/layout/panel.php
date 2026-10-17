@@ -1,64 +1,48 @@
 <?php
-/**
- * Staff panel layout (docs/08 UI-29): side menu from 1024 px, folding menu
- * (<details>, works without JavaScript) below that, menu items by right
- * (UI-31, docs/09 §4.1). The school year in the top bar comes with FASE-02;
- * the emergency bar (UI-30) with FASE-05.
- *
- * @var string|null $title Page title
- */
-$akunAktif = service('akunAktif');
-$menu      = (new \App\Libraries\MenuPanel())->untuk($akunAktif, service('request')->getUri()->getPath());
-$roleLabel = config('Label')->codes['akun_role.role'];
-$roles     = array_values(array_filter(array_map(static fn (string $role): ?string => $roleLabel[$role] ?? null, $akunAktif->roles())));
+$menu = ['scan' => 'Scan QR', 'rekap' => 'Rekap harian', 'siswa' => 'Siswa', 'libur' => 'Libur'];
+$path = service('request')->getPath();
 ?>
 <!doctype html>
 <html lang="id">
 <head>
 <?= $this->include('layout/head') ?>
+<?= $this->renderSection('head') ?>
 </head>
-<body>
-<?php // Rendered after the head: a nested view() call clears this view's data, such as $title. ?>
-<?php $menuHtml = view('layout/panel_menu', ['menu' => $menu], ['saveData' => false]); ?>
-<a class="visually-hidden-focusable lewati-isi" href="#isi">Lewati ke isi</a>
-<div class="panel">
-    <nav class="panel-samping" aria-label="Menu utama">
-        <div class="merek mb-3"><img src="<?= base_url('aset/logo/logo-sekolah.png') ?>" alt="" width="32" height="31"><span>Spensada</span></div>
-        <?= $menuHtml ?>
-    </nav>
-    <div>
-        <header class="panel-atas">
-            <details class="menu-lipat">
-                <summary><?= view('komponen/ikon', ['name' => 'menu'], ['saveData' => false]) ?><span class="visually-hidden">Menu</span></summary>
-                <nav aria-label="Menu utama">
-                    <?= $menuHtml ?>
-                </nav>
-            </details>
-            <div class="merek"><img src="<?= base_url('aset/logo/logo-sekolah.png') ?>" alt="" width="32" height="31"><span>Spensada</span></div>
-<?php if ($akunAktif->akun() !== null): ?>
-            <details class="menu-akun ms-auto">
-                <summary>
-                    <?= view('komponen/ikon', ['name' => 'user'], ['saveData' => false]) ?>
-                    <span class="menu-akun-nama"><?= esc($akunAktif->akun()['nama'] ?? $akunAktif->akun()['username']) ?></span>
-<?php if ($roles !== []): ?>
-                    <span class="menu-akun-role"><?= esc(implode(', ', $roles)) ?></span>
-<?php endif ?>
-                </summary>
-                <div class="menu-akun-isi">
-                    <a href="<?= url_to('akun.password.ubah') ?>"><?= view('komponen/ikon', ['name' => 'key-round'], ['saveData' => false]) ?> Ganti password</a>
-                    <form method="post" action="<?= url_to('akun.login.keluar') ?>">
+<body class="bg-body-tertiary">
+<nav class="navbar navbar-expand-md bg-primary" data-bs-theme="dark">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="<?= url_to('rekap') ?>">
+            <img src="<?= base_url('aset/logo/logo-sekolah.png') ?>" alt="" width="30" height="29">Spensada
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Buka menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="navbar-nav me-auto">
+<?php foreach ($menu as $route => $label): ?>
+<?php $aktif = str_starts_with($path, 'panel/' . $route); ?>
+                <li class="nav-item"><a class="nav-link<?= $aktif ? ' active' : '' ?>"<?= $aktif ? ' aria-current="page"' : '' ?> href="<?= url_to($route) ?>"><?= $label ?></a></li>
+<?php endforeach ?>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link<?= $path === 'panel/password' ? ' active' : '' ?>" href="<?= url_to('password') ?>">Ganti password</a></li>
+                <li class="nav-item">
+                    <form method="post" action="<?= url_to('logout') ?>">
                         <?= csrf_field() ?>
-                        <button type="submit"><?= view('komponen/ikon', ['name' => 'log-out'], ['saveData' => false]) ?> Logout</button>
+                        <button type="submit" class="nav-link">Logout</button>
                     </form>
-                </div>
-            </details>
-<?php endif ?>
-        </header>
-        <main id="isi" class="panel-isi">
-            <?= view('komponen/pesan_kilat', ['sukses' => session()->getFlashdata('sukses'), 'galat' => session()->getFlashdata('galat')], ['saveData' => false]) ?>
-            <?= $this->renderSection('content') ?>
-        </main>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
+</nav>
+<main class="container py-4">
+<?php foreach (['sukses' => 'success', 'galat' => 'danger'] as $kunci => $warna): ?>
+<?php if (session()->getFlashdata($kunci)): ?>
+    <div class="alert alert-<?= $warna ?>" role="<?= $kunci === 'galat' ? 'alert' : 'status' ?>"><?= esc(session()->getFlashdata($kunci)) ?></div>
+<?php endif ?>
+<?php endforeach ?>
+<?= $this->renderSection('content') ?>
+</main>
 </body>
 </html>

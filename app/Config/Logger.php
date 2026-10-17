@@ -39,7 +39,7 @@ class Logger extends BaseConfig
      *
      * @var int|list<int>
      */
-    public $threshold = (ENVIRONMENT === 'production') ? 5 : 9; // warning and up in production (docs/11 GAL-18)
+    public $threshold = (ENVIRONMENT === 'production') ? 5 : 9; // warning and up in production
 
     /**
      * --------------------------------------------------------------------------
@@ -82,7 +82,7 @@ class Logger extends BaseConfig
          * File Handler
          * --------------------------------------------------------------------
          */
-        // Adds the request ID, method, and path to every line (docs/11 GAL-19).
+        // Adds the request ID, method, and path to every line.
         RequestLogHandler::class => [
             // The log levels that this handler will handle.
             'handles' => [

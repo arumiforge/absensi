@@ -7,7 +7,7 @@ this file short; put details in `.claude/memory/`.
 ## Read first
 
 - Product: **Spensada** (product name). School: **SMP 1 DAWE**. Details: `.claude/memory/project.md`.
-- Specs live in `docs/` (Indonesian) and are the source of truth. Start at `docs/00-project-overview.md` §11 (rules for the AI implementer).
+- The spec is `docs/spesifikasi.md` (Indonesian, one file) and is the source of truth. The app is deliberately minimal: one admin, morning QR attendance, daily recap. Do not add features that are not in the spec without the owner's approval.
 - If an instruction is ambiguous, or conflicts with `docs/` or with `.claude/memory/decisions.md`: **stop and ask the owner**. Do not guess, do not silently pick one side.
 
 ## Hard rules (short version)

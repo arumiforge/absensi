@@ -30,7 +30,7 @@ class Database extends Config
         'username'     => '',
         'password'     => '',
         'database'     => 'spensada',
-        'DBDriver'     => 'App\\Database\\MySQLi', // docs/07 ARS-45
+        'DBDriver'     => 'App\\Database\\MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
         'DBDebug'      => true,
@@ -39,11 +39,11 @@ class Database extends Config
         'swapPre'      => '',
         'encrypt'      => false,
         'compress'     => false,
-        'strictOn'     => true, // docs/07 ARS-43
+        'strictOn'     => true,
         'failover'     => [],
         'port'         => 3306,
         'numberNative' => false,
-        'foundRows'    => true, // docs/07 ARS-40
+        'foundRows'    => true,
         'dateFormat'   => [
             'date'     => 'Y-m-d',
             'datetime' => 'Y-m-d H:i:s',
@@ -169,7 +169,7 @@ class Database extends Config
         'password'     => '',
         'database'     => 'spensada_test',
         'DBDriver'     => 'App\\Database\\MySQLi',
-        'DBPrefix'     => '', // raw SQL (CHECK, GET_LOCK) does not use a prefix (ARS-45 item 4)
+        'DBPrefix'     => '', // raw SQL (CHECK, GET_LOCK) does not use a prefix
         'pConnect'     => false,
         'DBDebug'      => true,
         'charset'      => 'utf8mb4',

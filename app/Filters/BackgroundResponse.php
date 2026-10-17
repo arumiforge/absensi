@@ -7,15 +7,12 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /**
- * Shared helpers for background requests (docs/07 ARS-13, docs/10 API-02, API-03).
+ * Shared helpers for background requests.
  */
 trait BackgroundResponse
 {
-    /** Home page per account type (docs/09 RT-18 item 1). */
-    private const HOME = ['staf' => '/panel', 'siswa' => '/portal', 'stasiun' => '/kiosk'];
-
     /**
-     * JavaScript requests send `X-Requested-With: XMLHttpRequest` (API-02).
+     * JavaScript requests send `X-Requested-With: XMLHttpRequest`.
      */
     protected function isBackground(RequestInterface $request): bool
     {
@@ -23,7 +20,7 @@ trait BackgroundResponse
     }
 
     /**
-     * Error body `{"kode": …, "pesan": …}` plus extra fields (API-03).
+     * Error body `{"kode": …, "pesan": …}` plus extra fields.
      *
      * @param array<string, mixed> $extra
      */
@@ -39,6 +36,6 @@ trait BackgroundResponse
      */
     protected function homePage(): string
     {
-        return self::HOME[session('jenis')] ?? '/login';
+        return session('admin_id') === null ? '/login' : '/panel';
     }
 }

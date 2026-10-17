@@ -11,9 +11,8 @@
 | Google Maps | https://www.google.com/maps/place/SMP+1+Dawe/@-6.7185892,110.8779716,17z/data=!4m6!3m5!1s0x2e70da226beac053:0x90c8d30d51a5435a!8m2!3d-6.7185892!4d110.8779716!16s%2Fg%2F1hm44gxbf?hl=id |
 | Repo owner | Arumi Studios (`arumiforge`) — the only contributor |
 
-The official school name, address, and logo are also admin settings in the
-app (`docs/01` FR-MD-08). Use the values above as seed/default data only;
-never hard-code them into views.
+The school name shown in the app comes from `Config\Spensada::$namaSekolah`;
+never hard-code it into views.
 
 ## Brand assets
 
@@ -41,9 +40,10 @@ Head tags for every layout:
 
 | Users | Device focus |
 |---|---|
-| Students (siswa) | **Mobile-first.** Design for a ~360 px phone first, then scale up. Light pages, mobile data. |
-| Admin, teachers, homeroom teachers, guru piket, guru BK, leaders | **Responsive.** Desktop and phone must both work well. |
-| Scan stations (kiosk) | Windows laptop, Chrome/Edge, works offline. |
+| One admin (the only account) | Responsive: desktop and phone. |
+| Scan page (`/panel/scan`) | Laptop webcam or phone camera, Chrome/Edge, HTTPS, online. |
+
+Students have no account; they only show their QR card.
 
 ## Stack
 
@@ -51,11 +51,11 @@ Head tags for every layout:
 |---|---|
 | Backend | CodeIgniter 4 (4.7.x), PHP **8.3 or newer** |
 | Database | MySQL 8.4 (MySQLi driver, `utf8mb4`) |
-| Frontend | Server-rendered HTML + vanilla JS, **Bootstrap 5** (see `decisions.md` D-02) |
+| Frontend | Server-rendered HTML + vanilla JS, **standard Bootstrap 5.3** (no custom CSS theme) |
 | Assets | Minified vendor files (`*.min.css`, `*.min.js`) served from `public/aset/vendor/<lib>/<version>/`. No CDN. |
-| Spreadsheet | `phpoffice/phpspreadsheet` (import/export XLSX) |
-| PDF | `mpdf/mpdf` |
-| Font / icons | Plus Jakarta Sans, Lucide sprite (`docs/08` §4) |
+| Spreadsheet | `phpoffice/phpspreadsheet` (student import, recap XLSX) |
+| PDF | `mpdf/mpdf` (recap PDF, QR cards) |
+| QR | `chillerlan/php-qrcode` (cards), jsQR 1.4.0 in `public/aset/vendor/jsqr/` (camera) |
 | Local dev | Windows + Laragon + Nginx + MySQL, `https://spensada.test` |
 | Production | Windows + Laragon + Nginx + MySQL (see `decisions.md` D-01) |
 | Time zone | `Asia/Jakarta` (WIB) everywhere |

@@ -2,7 +2,6 @@
 
 namespace Config;
 
-use App\Libraries\AkunAktif;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -30,16 +29,4 @@ class Services extends BaseService
      *     return new \CodeIgniter\Example();
      * }
      */
-
-    /**
-     * The logged-in account for this request (docs/07 ARS-47).
-     */
-    public static function akunAktif(bool $getShared = true): AkunAktif
-    {
-        if ($getShared) {
-            return static::getSharedInstance('akunAktif');
-        }
-
-        return new AkunAktif();
-    }
 }

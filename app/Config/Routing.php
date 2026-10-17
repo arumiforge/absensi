@@ -30,10 +30,6 @@ class Routing extends BaseRouting
      */
     public array $routeFiles = [
         APPPATH . 'Config/Routes.php',
-        APPPATH . 'Config/Routes/Akun.php',
-        APPPATH . 'Config/Routes/Panel.php',
-        APPPATH . 'Config/Routes/Portal.php',
-        APPPATH . 'Config/Routes/Kiosk.php',
     ];
 
     /**

@@ -2,12 +2,9 @@
 
 namespace Config;
 
-use App\Filters\Area;
 use App\Filters\Csrf;
-use App\Filters\Hak;
 use App\Filters\Keamanan;
 use App\Filters\Sesi;
-use App\Filters\WajibGanti;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\DebugToolbar;
@@ -39,12 +36,9 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
-        // Spensada filters (docs/07 ARS-13)
-        'sesi'        => Sesi::class,
-        'area'        => Area::class,
-        'wajib-ganti' => WajibGanti::class,
-        'hak'         => Hak::class,
-        'keamanan'    => Keamanan::class,
+        // Spensada filters
+        'sesi'     => Sesi::class,
+        'keamanan' => Keamanan::class,
     ];
 
     /**
@@ -69,7 +63,7 @@ class Filters extends BaseFilters
             'pagecache',   // Web Page Caching
             'performance', // Performance Metrics
             'toolbar',     // Debug Toolbar
-            'keamanan',    // CSP and Permissions-Policy, also on 404 (docs/12 SEC-35)
+            'keamanan',    // CSP and Permissions-Policy, also on 404
         ],
     ];
 
@@ -84,10 +78,9 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // csrf runs before every other filter, so the token is checked before login (docs/10 §4.1).
+            // csrf runs before every other filter, so the token is checked before login.
             'csrf',
-            // JSON bodies are checked per field after json_decode() instead (docs/12 SEC-43).
-            'invalidchars' => ['except' => ['kiosk/api/*']],
+            'invalidchars',
         ],
         'after' => [
             // 'honeypot',
