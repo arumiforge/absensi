@@ -1,7 +1,7 @@
 # Indonesian locale formats
 
 Everything shown to users — views, flash messages, exports, PDF, WA messages —
-uses these formats. Source: `docs/08` §9.3 (UI-53 to UI-55).
+uses these formats.
 
 ## The rule
 
@@ -24,7 +24,7 @@ user-facing dates, times, numbers, or money. The helper is autoloaded
 | `format_number(1024)` | `1.024` |
 | `format_number(12.5, 1)` | `12,5` |
 | `format_rupiah(1250000)` | `Rp 1.250.000` (negative: `-Rp 1.250.000`) |
-| `format_percent(87.5)` | `88%` (whole number, half rounds up — `docs/13` IE-04) |
+| `format_percent(87.5)` | `88%` (whole number, half rounds up) |
 | `format_wa('6281234567890')` | `0812-3456-7890` (stored `62…`, shown with `0` and hyphens) |
 
 Inputs: `DateTimeInterface`, Unix timestamp, or a string. Strings without an
@@ -43,16 +43,14 @@ offset are read as WIB. Empty input returns `''`.
 
 | Where | Format |
 |---|---|
-| URLs and query params | `YYYY-MM-DD`, month `YYYY-MM`, time `HH:MM` (`docs/09` RT-04) |
+| URLs and query params | `YYYY-MM-DD`, month `YYYY-MM`, time `HH:MM` |
 | Database | `DATE`, `DATETIME` in WIB |
-| CSV export | `YYYY-MM-DD`, `HH:MM:SS` (`docs/13` IE-09) |
-| File names | `YYYYMMDD` (`docs/13` IE-07) |
-| XLSX | real date cells, not text (`docs/13` IE-08) |
-| Import accepts | Excel date cell, `DD-MM-YYYY`, or `DD/MM/YYYY` (`docs/13` §6.1) |
+| CSV export | `YYYY-MM-DD`, `HH:MM:SS` |
+| File names | `YYYYMMDD` |
+| XLSX | real date cells, not text |
+| Import accepts | Excel date cell, `DD-MM-YYYY`, or `DD/MM/YYYY` |
 
 ## JavaScript
 
-Browser code formats with `Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta' })`
-through one shared module (to be created in FASE-00, see `progress.md`). Its
-output must match the PHP helper exactly. The kiosk computes WIB from its
-corrected clock without using the Windows time zone (`docs/07` ARS-27).
+Browser code shows only text the server already formatted (for example the
+scan result). Do not format dates or numbers in JavaScript.

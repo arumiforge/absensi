@@ -11,21 +11,20 @@
 | Files in `.claude/` and `CLAUDE.md` | **English** | |
 | Project specs in `docs/` | Indonesian | Existing language; keep it when editing docs. |
 | **UI text** (labels, buttons, menus, flash messages, validation errors, emails/WA, PDF, exports) | **Indonesian** | Friendly, non-technical. See below. |
-| **URL paths and query parameters** | **Indonesian** | Lowercase kebab-case paths, `snake_case` params (`docs/09` RT-03, RT-04). |
+| **URL paths and query parameters** | **Indonesian** | Lowercase kebab-case paths, `snake_case` params. |
 
 ## Identifiers in code
 
-- Names already fixed in `docs/` keep the exact doc spelling, even when
-  Indonesian: tables and columns (`docs/06`), route paths and route names,
-  controller and method names (`docs/09` RT-20), CSS classes and tokens
-  (`docs/08` UI-74), label keys (`app/Config/Label.php`). Do not translate them.
-- New technical names that `docs/` does not define (local variables, private
+- Existing Indonesian names keep their spelling: tables and columns
+  (`docs/spesifikasi.md` §3), route paths and route names, controller and
+  method names. Do not translate them.
+- New technical names that are not user-facing (local variables, private
   helpers, internal classes) use English.
 - Status: confirmed by the owner on 2026-10-10 — see `decisions.md` D-05.
 
 ## Writing UI text (Indonesian)
 
-Follow `docs/08` §8 and §9. In short:
+In short:
 
 - Address staff as **"Anda"**, students as **"kamu"**. Login page, slips, PDF, public pages: formal, no "kamu".
 - Short, active, friendly sentences. Buttons are verbs: "Simpan", "Kirim", "Batalkan".
@@ -46,7 +45,7 @@ Examples:
 ## Example: the same feature in each language
 
 ```php
-// Reject requests for dates before the system start date (docs/04 §4.10).
+// Reject requests for dates before the system start date .
 if ($tanggal < $statusMulai) {
     return redirect()->to(url_to('panel.presensi_manual.index'))
         ->with('galat', 'Tanggal ini sebelum Spensada mulai dipakai. Pilih tanggal lain.');
