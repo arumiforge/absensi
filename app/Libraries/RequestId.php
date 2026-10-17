@@ -3,9 +3,9 @@
 namespace App\Libraries;
 
 /**
- * The ID of the current request (docs/12 SEC-58): Nginx's `$request_id`,
+ * The ID of the current request: Nginx's `$request_id`,
  * passed to PHP as `REQUEST_ID`, written on every log line and shown as
- * the report code on the 500 page (docs/11 GAL-13).
+ * the report code on the 500 page.
  */
 final class RequestId
 {

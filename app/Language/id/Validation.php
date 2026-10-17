@@ -1,9 +1,8 @@
 <?php
 
 /**
- * Indonesian text for CI4's built-in validation rules (docs/11 VAL-06).
+ * Indonesian text for CI4's built-in validation rules.
  * {field} is the on-screen label of the field, never its technical name.
- * Messages per form in docs/11 §4–§5 replace these where they differ.
  * The core messages (noRuleSets, ruleNotFound, ...) are developer errors
  * and stay in English.
  */

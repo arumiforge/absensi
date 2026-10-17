@@ -6,7 +6,7 @@ use CodeIgniter\Database\MySQLi\Connection as BaseMySQLiConnection;
 
 /**
  * MySQLi connection that fixes the session time zone and collation right
- * after connecting (docs/07 ARS-45, docs/06 DB-04, DB-05).
+ * after connecting.
  *
  * CI4 only calls set_charset(), which leaves collation_connection at the
  * server default (utf8mb4_0900_ai_ci on MySQL 8.4).

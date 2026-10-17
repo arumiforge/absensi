@@ -7,7 +7,7 @@
  * and money through these functions. Do not call date(), number_format(),
  * or IntlDateFormatter directly for user-facing output.
  *
- * Formats follow docs/08-ui-ux-design-system.md §9.3 (UI-53 to UI-55).
+ * Formats follow .claude/memory/locale-format.md.
  * Time zone is always Asia/Jakarta (WIB).
  */
 
@@ -28,7 +28,7 @@ if (! function_exists('format_to_datetime')) {
      * Normalizes a date input to a DateTimeImmutable in Asia/Jakarta.
      *
      * Strings without an offset are read as WIB, because the database
-     * session runs in WIB (docs/07 ARS-45). Integers are Unix timestamps.
+     * session runs in WIB. Integers are Unix timestamps.
      */
     function format_to_datetime(DateTimeInterface|int|string|null $value): ?DateTimeImmutable
     {
@@ -131,7 +131,7 @@ if (! function_exists('format_number')) {
 if (! function_exists('format_wa')) {
     /**
      * Shows a stored WA number (62…) with a leading 0 and hyphens after the
-     * 4th and 8th digit: 6281234567890 → 0812-3456-7890 (docs/08 UI-54).
+     * 4th and 8th digit: 6281234567890 → 0812-3456-7890.
      */
     function format_wa(?string $value): string
     {
@@ -168,7 +168,7 @@ if (! function_exists('format_percent')) {
     /**
      * Formats a percentage as a whole number without a space: "88%".
      *
-     * Exact halves round up (87,5 becomes 88), per docs/13 IE-04.
+     * Exact halves round up (87,5 becomes 88).
      */
     function format_percent(float|int|string|null $value): string
     {

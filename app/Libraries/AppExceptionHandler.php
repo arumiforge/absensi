@@ -13,18 +13,18 @@ use Config\Exceptions;
 use Throwable;
 
 /**
- * Application exception handler (docs/09 RT-19, docs/11 §6).
+ * Application exception handler.
  *
  * Pages: 400, 403, 404, 429, and 500 (any other status) with friendly
  * Indonesian text, never the exception message or trace. Background
- * requests (X-Requested-With) get the JSON code of docs/10 API-03.
+ * requests (X-Requested-With) get a JSON code.
  * CLI requests and 5xx with display_errors on (development) keep the CI4
- * default, so developers still see the trace (GAL-13, GAL-17).
+ * default, so developers still see the trace.
  */
 class AppExceptionHandler implements ExceptionHandlerInterface
 {
     /**
-     * Status => [JSON code (docs/10 API-03), view under errors/html/].
+     * Status => [JSON code, view under errors/html/].
      */
     private const PAGES = [
         400 => ['permintaan_rusak', 'error_400'],
@@ -45,7 +45,7 @@ class AppExceptionHandler implements ExceptionHandlerInterface
         int $exitCode,
     ): void {
         if ($statusCode === 400) {
-            // GAL-02: the message of CI4's SecurityException holds the rejected value, which may be a password.
+            // The message of CI4's SecurityException holds the rejected value, which may be a password.
             log_message('warning', 'Bad request rejected: ' . $exception::class);
         }
 
@@ -82,26 +82,24 @@ class AppExceptionHandler implements ExceptionHandlerInterface
 
         [$kode, $view] = self::PAGES[$statusCode] ?? ['galat_server', 'production'];
         $kodeLaporan   = RequestId::reportCode();
-        // 403 text differs for students; until sessions exist (FASE-01) the /portal prefix tells them apart.
-        $siswa = explode('/', $request->getPath())[0] === 'portal';
 
-        $response->noCache(); // GAL-13; replaces any cache header a controller set before the error
+        $response->noCache(); // Replaces any cache header a controller set before the error
 
         if ($request->isAJAX()) {
-            return $response->setJSON(['kode' => $kode, 'pesan' => self::message($statusCode, $siswa, $kodeLaporan)]);
+            return $response->setJSON(['kode' => $kode, 'pesan' => self::message($statusCode, $kodeLaporan)]);
         }
 
-        return $response->setContentType('text/html')->setBody(view('errors/html/' . $view, ['siswa' => $siswa, 'kodeLaporan' => $kodeLaporan]));
+        return $response->setContentType('text/html')->setBody(view('errors/html/' . $view, ['kodeLaporan' => $kodeLaporan]));
     }
 
     /**
-     * Screen text of docs/08 UI-56 for a status.
+     * Screen text for a status.
      */
-    public static function message(int $statusCode, bool $siswa, string $kodeLaporan): string
+    public static function message(int $statusCode, string $kodeLaporan): string
     {
         return match ($statusCode) {
             400     => lang('Galat.permintaanRusak'),
-            403     => lang($siswa ? 'Galat.diLuarHakSiswa' : 'Galat.diLuarHak'),
+            403     => lang('Galat.diLuarHak'),
             404     => lang('Galat.tidakDitemukan'),
             429     => lang('Galat.terlaluSering'),
             default => lang('Galat.gangguan', [$kodeLaporan]),

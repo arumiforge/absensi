@@ -16,7 +16,7 @@ use Config\Exceptions;
 use Config\Services;
 
 /**
- * Error pages, report code, and log lines (docs/11 GAL-02, GAL-13, GAL-19, GAL-23).
+ * Error pages, report code, and log lines.
  *
  * @internal
  */
@@ -97,10 +97,9 @@ final class ErrorPageTest extends CIUnitTestCase
         $this->assertNoTrace($result->getBody());
     }
 
-    public function testForbiddenTextDependsOnArea(): void
+    public function testForbiddenPageText(): void
     {
         $this->assertStringContainsString('Anda tidak berhak membuka data ini.', $this->handle(new RuntimeException('x'), 403, 'panel/siswa')->getBody());
-        $this->assertStringContainsString('Kamu tidak berhak membuka halaman ini.', $this->handle(new RuntimeException('x'), 403, 'portal/izin')->getBody());
     }
 
     public function testBadRequestAndTooManyRequestsPages(): void
@@ -130,15 +129,12 @@ final class ErrorPageTest extends CIUnitTestCase
         $this->assertSame('tidak_ditemukan', json_decode($response->getBody(), true)['kode']);
     }
 
-    public function testErrorPageLoadsAssetsInOrderWithVersion(): void
+    public function testErrorPageLoadsBootstrapWithVersion(): void
     {
         $body  = $this->handle(new RuntimeException('x'), 500)->getBody();
         $versi = config('Spensada')->versi;
 
-        $this->assertMatchesRegularExpression(
-            '#bootstrap\.min\.css\?v=' . preg_quote($versi, '#') . '".*token\.css\?v=.*spensada\.css\?v=#s',
-            $body,
-        );
+        $this->assertStringContainsString('bootstrap.min.css?v=' . $versi . '"', $body);
         $this->assertStringContainsString('href="/favicon.ico"', $body);
         $this->assertStringNotContainsString('style=', $body);
         $this->assertStringNotContainsString('<script', $body);

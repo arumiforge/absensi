@@ -6,7 +6,7 @@ use CodeIgniter\Log\Handlers\FileHandler;
 
 /**
  * CI4 file log handler that starts every line with the request ID, method,
- * and path without query string (docs/11 GAL-19, docs/12 SEC-58). The query
+ * and path without query string. The query
  * string is left out because it can hold searched NISNs or names.
  */
 class RequestLogHandler extends FileHandler

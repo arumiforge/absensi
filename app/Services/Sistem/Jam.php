@@ -5,7 +5,7 @@ namespace App\Services\Sistem;
 use CodeIgniter\I18n\Time;
 
 /**
- * The only source of "now" for services (docs/07 ARS-44).
+ * The only source of "now" for services.
  *
  * Built on Time::now(), so tests can freeze it with Time::setTestNow().
  * Queries never use NOW(), CURDATE() or CURRENT_TIMESTAMP; pass these

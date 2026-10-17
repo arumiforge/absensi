@@ -9,7 +9,7 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\Security\Exceptions\SecurityException;
 
 /**
- * Filter `csrf`, global before all others (docs/07 ARS-13, docs/12 SEC-30).
+ * Filter `csrf`, global before all others.
  * Token check stays in Security::verify(); this filter only changes how a
  * rejection is answered.
  */
@@ -23,7 +23,7 @@ class Csrf extends BaseCsrf
             return null;
         }
 
-        // Over post_max_size PHP drops all fields, the token too (docs/11 GAL-11).
+        // Over post_max_size PHP drops all fields, the token too.
         if ($this->isTooLarge($request)) {
             return $this->isBackground($request)
                 ? $this->jsonError(413, 'terlalu_besar', 'Request body exceeds post_max_size.')
@@ -37,23 +37,21 @@ class Csrf extends BaseCsrf
 
             return null;
         } catch (SecurityException) {
-            log_message('info', 'CSRF token rejected.'); // SEC-30 item 4
+            log_message('info', 'CSRF token rejected.');
         }
 
         if ($this->isBackground($request)) {
-            // docs/10 API-04: send the current token so the client retries once.
+            // Send the current token so the client can retry once.
             return $this->jsonError(403, 'csrf', 'CSRF token missing or invalid.', [
                 'csrf' => ['header' => $security->getHeaderName(), 'token' => $security->getHash()],
             ]);
         }
-
-        // docs/11 GAL-06
         $message = $request->getPath() === 'login'
             ? 'Halaman login sudah terlalu lama dibuka. Login lagi.'
             : 'Kiriman tidak dapat diproses karena halaman sudah terlalu lama dibuka. Periksa isian, lalu kirim lagi.'
                 . ($request->getFiles() !== [] ? ' File perlu dipilih ulang.' : '');
 
-        // Same shape as RedirectResponse::withInput(), minus passwords, PINs and tokens (SEC-30 item 3).
+        // Same shape as RedirectResponse::withInput(), minus passwords, PINs and tokens.
         $tokenName = $security->getTokenName();
         $post      = array_filter(
             (array) $request->getPost(),
@@ -85,7 +83,7 @@ class Csrf extends BaseCsrf
 
     /**
      * The Referer path when it is a page of this app, else the area home
-     * page (docs/12 SEC-30 item 3, SEC-39).
+     * page.
      */
     private function originPage(IncomingRequest $request): string
     {

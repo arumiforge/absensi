@@ -3,7 +3,7 @@
 use CodeIgniter\Test\CIUnitTestCase;
 
 /**
- * Built-in validation messages are never shown in English (docs/11 VAL-06, VAL-32).
+ * Built-in validation messages are never shown in English.
  *
  * @internal
  */
