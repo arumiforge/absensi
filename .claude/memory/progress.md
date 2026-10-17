@@ -11,7 +11,7 @@ last 10 entries.
 
 ## Next
 
-1. Owner: create a fresh empty database (old tables cannot be migrated), run `php spark migrate` and `php spark admin:password` on Laragon, run `composer test`, print one page of QR cards and test scanning with the school webcam/phone over HTTPS.
+1. Owner: on the server, `copy env-example-production .env` and `php spark key:generate`, then create a fresh empty database `absensi` (old tables cannot be migrated), run `php spark migrate` and `php spark admin:password` on Laragon, run `composer test`, print one page of QR cards and test scanning with the school webcam/phone over HTTPS.
 
 ## Open questions for the owner
 
@@ -22,6 +22,7 @@ last 10 entries.
 
 | Date | Branch | Work |
 |---|---|---|
+| 2026-10-17 | `sky/gracious-gates-xd73xv` | Added `env-example-production` for https://spensada.web.id (database `absensi`, root without password; key generated on the server). |
 | 2026-10-17 | `sky/gracious-gates-xd73xv` | Total overhaul to the minimal QR attendance app (D-11). New schema (`admin`, `siswa`, `presensi`, `libur`), Presensi service, scan page with jsQR, recap Excel/PDF, QR cards, student import, holidays, password change, `admin:password` command. Removed old features, docs, and tests. |
 | 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-02 L02-01 to L02-09 (now removed by D-11). |
 | 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-01 L01-01 to L01-08 (now removed by D-11). |
