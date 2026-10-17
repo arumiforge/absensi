@@ -9,7 +9,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 /**
  * Filter `keamanan` in `$required['after']`: per-area Content-Security-Policy
- * and Permissions-Policy (docs/12 SEC-35 to SEC-37). The exception handler
+ * and Permissions-Policy. The exception handler
  * calls applyHeaders() for 403 and 500 pages.
  */
 class Keamanan implements FilterInterface
@@ -18,8 +18,8 @@ class Keamanan implements FilterInterface
         'default-src' => "'self'",
         'script-src'  => "'self'",
         'style-src'   => "'self'",
-        // data: for Bootstrap's inline SVG icons, blob: for photo previews (SEC-36).
-        'img-src'         => "'self' blob: data:",
+        // data: for Bootstrap's inline SVG icons.
+        'img-src'         => "'self' data:",
         'font-src'        => "'self'",
         'connect-src'     => "'self'",
         'frame-src'       => "'self'",
@@ -28,13 +28,6 @@ class Keamanan implements FilterInterface
         'base-uri'        => "'none'",
         'form-action'     => "'self'",
         'frame-ancestors' => "'none'",
-    ];
-
-    /** Kiosk: QR reader WebAssembly, Service Worker and manifest (SEC-36). */
-    private const CSP_KIOSK = [
-        'script-src'   => "'self' 'wasm-unsafe-eval'",
-        'worker-src'   => "'self'",
-        'manifest-src' => "'self'",
     ];
 
     public function before(RequestInterface $request, $arguments = null)
@@ -56,18 +49,18 @@ class Keamanan implements FilterInterface
     public static function applyHeaders(RequestInterface $request, ResponseInterface $response): void
     {
         $path    = $request instanceof IncomingRequest ? trim($request->getPath(), '/') : '';
-        $isKiosk = $path === 'kiosk' || str_starts_with($path, 'kiosk/');
+        // Only the scan page may use the camera.
+        $isScan = $path === 'panel/scan';
 
         if (! $response->hasHeader('Content-Security-Policy') && ! $response->hasHeader('Content-Security-Policy-Report-Only')) {
-            $policy = $isKiosk ? array_merge(self::CSP, self::CSP_KIOSK) : self::CSP;
-            $value  = implode('; ', array_map(static fn ($name, $source) => "{$name} {$source}", array_keys($policy), $policy));
+            $value = implode('; ', array_map(static fn ($name, $source) => "{$name} {$source}", array_keys(self::CSP), self::CSP));
 
-            // Report-only in development: the Debug Toolbar uses inline scripts (SEC-36).
+            // Report-only in development: the Debug Toolbar uses inline scripts.
             $response->setHeader(ENVIRONMENT === 'development' ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy', $value);
         }
 
         if (! $response->hasHeader('Permissions-Policy')) {
-            $response->setHeader('Permissions-Policy', ($isKiosk ? 'camera=(self)' : 'camera=()') . ', microphone=(), geolocation=(), payment=(), usb=()');
+            $response->setHeader('Permissions-Policy', ($isScan ? 'camera=(self)' : 'camera=()') . ', microphone=(), geolocation=(), payment=(), usb=()');
         }
     }
 }

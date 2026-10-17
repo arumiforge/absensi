@@ -4,14 +4,15 @@ namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
 
-/**
- * Technical parameters that admins do not change (docs/07 ARS-17).
- * Every value can be overridden in .env as `spensada.<property>`.
- */
 class Spensada extends BaseConfig
 {
     /**
-     * App version, appended to asset URLs as `?v=` (docs/08 UI-73).
+     * App version, appended to asset URLs as `?v=`.
      */
-    public string $versi = '0.1.0';
+    public string $versi = '1.0.0';
+
+    /**
+     * Shown on the login page, recaps, and QR cards.
+     */
+    public string $namaSekolah = 'SMP 1 Dawe';
 }

@@ -22,6 +22,7 @@ class Pager extends BaseConfig
      */
     public array $templates = [
         'default_full'   => 'CodeIgniter\Pager\Views\default_full',
+        'bootstrap'      => 'App\Views\pager',
         'default_simple' => 'CodeIgniter\Pager\Views\default_simple',
         'default_head'   => 'CodeIgniter\Pager\Views\default_head',
     ];

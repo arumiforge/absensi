@@ -10,8 +10,6 @@
     <link rel="icon" href="/aset/logo/favicon-32.png" type="image/png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="/aset/vendor/bootstrap/5.3.8/css/bootstrap.min.css?v=<?= $versi ?>">
-    <link rel="stylesheet" href="/aset/css/token.css?v=<?= $versi ?>">
-    <link rel="stylesheet" href="/aset/css/spensada.css?v=<?= $versi ?>">
 </head>
 <body>
     <main class="container py-5 text-center">
