@@ -63,7 +63,7 @@ Bukti: `app/Controllers/Panel/Libur.php`, `app/Models/LiburModel.php`, `Presensi
 
 ## 7. Pengujian otomatis — Ada, perlu dijalankan di Laragon
 
-64 pengujian PHPUnit: 34 unit (`tests/unit/`) dan 30 dengan database (`tests/database/`). Menurut catatan terakhir semuanya lulus di MySQL 8.0, tetapi belum dijalankan di Laragon dengan MySQL 8.4.
+63 pengujian PHPUnit: 33 unit (`tests/unit/`) dan 30 dengan database (`tests/database/`). Menurut catatan terakhir semuanya lulus di MySQL 8.0 (sebelum helper format WA, Rupiah, dan persen yang tidak dipakai dihapus), tetapi belum dijalankan di Laragon dengan MySQL 8.4.
 
 Yang belum: jalankan `composer test` di Laragon dan catat hasilnya.
 

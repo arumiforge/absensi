@@ -11,7 +11,7 @@ loads them automatically.
 | `language.md` | Which language to use where (chat, code, UI, URLs, agent prompts) | Owner |
 | `agent-rules.md` | Work boundaries for every agent, plus the parallel-task prompt template | Owner |
 | `git-workflow.md` | Branches, commit format, PRs, attribution, author identity | Owner |
-| `locale-format.md` | Date, time, number, and money formats, and the mandatory helper | Owner |
+| `locale-format.md` | Date, time, and number formats, and the mandatory helper | Owner |
 | `glossary.md` | Shared UI words and URL slugs so all agents use the same terms | Claude, when docs add terms |
 | `decisions.md` | Owner decisions made outside `docs/`, including open conflicts with `docs/` | Claude records, owner confirms |
 | `progress.md` | Current state, last work done, next steps, open questions | Claude, at the end of every task |
