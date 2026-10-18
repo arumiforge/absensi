@@ -15,16 +15,39 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Rekap extends BaseController
 {
+    /**
+     * Status filter value for students without a record.
+     */
+    private const BELUM = 'belum';
+
     public function index(): string
     {
         [$tanggal, $kelas] = $this->filter();
+        $status            = (string) $this->request->getGet('status');
+        $status            = isset(Presensi::STATUS[$status]) || $status === self::BELUM ? $status : '';
+        $cari              = trim((string) $this->request->getGet('cari'));
+        $rekap             = (new Presensi())->rekap($tanggal, $kelas);
+        $hari              = new \DateTimeImmutable($tanggal);
+
+        // The counts stay for the whole date and class; only the list is narrowed.
+        $baris = array_values(array_filter(
+            $rekap['baris'],
+            static fn (array $siswa): bool => ($status === '' || ($siswa['status'] ?? self::BELUM) === $status)
+                && ($cari === '' || mb_stripos($siswa['nama'], $cari) !== false || mb_stripos($siswa['nis'], $cari) !== false),
+        ));
 
         return view('panel/rekap', [
             'title'       => 'Rekap harian',
             'tanggal'     => $tanggal,
+            'kemarin'     => $hari->modify('-1 day')->format('Y-m-d'),
+            'besok'       => $hari->modify('+1 day')->format('Y-m-d'),
+            'hariIni'     => (new Jam())->today(),
             'kelas'       => $kelas,
+            'status'      => $status,
+            'cari'        => $cari,
             'daftarKelas' => model(SiswaModel::class)->daftarKelas(),
-            'rekap'       => (new Presensi())->rekap($tanggal, $kelas),
+            'rekap'       => $rekap,
+            'baris'       => $baris,
         ]);
     }
 
@@ -34,7 +57,13 @@ class Rekap extends BaseController
         $tanggal    = (string) $this->request->getPost('tanggal');
         $status     = (string) $this->request->getPost('status');
         $keterangan = trim((string) $this->request->getPost('keterangan'));
-        $kembali    = url_to('rekap') . '?' . http_build_query(['tanggal' => $tanggal, 'kelas' => (string) $this->request->getPost('kelas')]);
+        // Back to the same list: date, class, status filter, and search.
+        $kembali = url_to('rekap') . '?' . http_build_query(array_filter([
+            'tanggal' => $tanggal,
+            'kelas'   => (string) $this->request->getPost('kelas'),
+            'status'  => (string) $this->request->getPost('filter_status'),
+            'cari'    => (string) $this->request->getPost('cari'),
+        ], static fn (string $nilai): bool => $nilai !== ''));
 
         if ($siswa === null || ! self::tanggalValid($tanggal) || ($status !== '' && ! isset(Presensi::STATUS[$status]))) {
             return redirect()->to($kembali)->with('galat', 'Data belum lengkap. Muat ulang halaman, lalu coba lagi.');
