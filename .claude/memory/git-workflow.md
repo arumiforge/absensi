@@ -2,12 +2,10 @@
 
 ## Branches
 
-- `main` is the **only long-lived branch**.
-- **One task = one branch**, created from the latest `main`: `<type>/<slug>`,
-  e.g. `fix/scan-jam-tutup`, `docs/tahapan`. Stages are listed in
-  `docs/tahapan.md`; name the stage in the PR title when the task belongs to one.
-- Merge to `main` through one PR per branch, then **delete the branch** (local and remote).
-- If the environment assigns a branch name (cloud sessions), use it.
+- **`main` is the only branch** (D-16). Do not create feature, fix, or docs
+  branches; commit and push straight to `main`.
+- Pull the latest `main` before starting work, and push when the task is done.
+- If a cloud session assigns another branch name, ask the owner before using it.
 - Never force-push `main`. Never rewrite history that is already on `main`.
 
 ## Commits
@@ -65,6 +63,6 @@ user.email = arumiforge@gmail.com
 
 ## Pull requests
 
-- Title: short English summary of the change.
-- Body (English): what changed and how it was tested, local test results (`composer test`), docs changed, open questions.
-- No CI: the owner runs the tests in Laragon before merging.
+- None: work goes straight to `main` (D-16).
+- Report in chat instead: what changed and how it was tested, local test results (`composer test`), docs changed, open questions.
+- No CI: the owner runs the tests in Laragon after pulling `main`.
