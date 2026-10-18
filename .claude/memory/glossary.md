@@ -13,7 +13,6 @@ disagree, the spec wins — fix this file. Need a new word? Ask the owner.
 | scan | Scan QR | `/panel/scan` |
 | rekap | Rekap harian | `/panel/rekap` |
 | `libur` | Libur | `/panel/libur` |
-| kartu | Kartu QR | `/panel/siswa/kartu` |
 | password | Ganti password | `/panel/password` |
 
 ## Daily status (`presensi.status`)
@@ -30,7 +29,7 @@ disagree, the spec wins — fix this file. Need a new word? Ask the owner.
 
 ## Buttons
 
-Tambah · Ubah · Simpan · Hapus · Batal · Cari · Import · Unduh Excel · Unduh PDF · Cetak kartu QR · Login · Logout.
+Tambah · Ubah · Simpan · Hapus · Batal · Cari · Import · Unduh Excel · Unduh PDF · Kirim sekarang · Login · Logout.
 
 ## URL rules
 
