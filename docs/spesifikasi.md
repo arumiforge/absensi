@@ -80,7 +80,7 @@ Semua tabel punya `created_at` dan `updated_at` kecuali `libur`.
 |---|---|
 | `/login` | Login admin. Paling banyak 10 percobaan per menit per alamat jaringan. |
 | `/panel/scan` | Kamera, hasil scan, dan jumlah scan yang belum terkirim. Kiriman scan: `POST /panel/scan` dengan JSON `{"scan": [{"id", "nis", "waktu"}]}`. |
-| `/panel/rekap` | Rekap harian, ubah status, unduh Excel/PDF (`/panel/rekap/excel`, `/panel/rekap/pdf`) |
+| `/panel/rekap` | Rekap harian: pindah ke hari sebelumnya/berikutnya, saring per kelas, per status (tombol jumlah per status, termasuk "Belum ada data"), dan cari nama atau NIS. Ubah status lewat jendela "Ubah status"; setelah disimpan, saringan tetap. Unduh Excel/PDF (`/panel/rekap/excel`, `/panel/rekap/pdf`) selalu berisi seluruh siswa di tanggal dan kelas itu. Di HP, tabel hanya menampilkan nama dan status. |
 | `/panel/siswa` | Daftar siswa, tambah, ubah, hapus, import |
 | `/panel/libur` | Tanggal libur |
 | `/panel/password` | Ganti password admin |
