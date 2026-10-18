@@ -16,7 +16,7 @@ this file short; put details in `.claude/memory/`.
 2. **Code, comments, commit messages, PRs, and agent prompts in English.**
 3. **UI text in friendly, non-technical Indonesian.** URL slugs in Indonesian.
 4. **No Claude attribution** anywhere: no `Co-Authored-By`, no `Claude-Session`, no "Generated with Claude Code". Commits are authored by the repo owner only.
-5. **One phase = one branch**, small commits, `type(scope): summary` format. `main` is the only long-lived branch.
+5. **One task = one branch**, small commits, `type(scope): summary` format. `main` is the only long-lived branch. Stages: `docs/tahapan.md`.
 6. **Stay inside your assigned files.** No unrequested refactors, renames, or new dependencies.
 7. **All user-facing dates, times, numbers, and money go through `app/Helpers/format_helper.php`.**
 8. **Update `.claude/memory/progress.md`** at the end of every task that changes the repo.

@@ -13,7 +13,7 @@ disagree, the spec wins — fix this file. Need a new word? Ask the owner.
 | scan | Scan QR | `/panel/scan` |
 | rekap | Rekap harian | `/panel/rekap` |
 | `libur` | Libur | `/panel/libur` |
-| kartu | Kartu QR | `/panel/siswa/kartu` |
+| import | Import siswa | `/panel/siswa/import` |
 | password | Ganti password | `/panel/password` |
 
 ## Daily status (`presensi.status`)
@@ -27,13 +27,14 @@ disagree, the spec wins — fix this file. Need a new word? Ask the owner.
 | `dispensasi` | Dispensasi |
 | `alpa` | Alpa |
 | (no record) | Belum ada data |
+| (manual: remove record) | Kosongkan |
 
 ## Buttons
 
-Tambah · Ubah · Simpan · Hapus · Batal · Cari · Import · Unduh Excel · Unduh PDF · Cetak kartu QR · Login · Logout.
+Tambah siswa · Ubah · Ubah status · Simpan · Hapus · Batal · Cari · Tampilkan · Hari ini · Import · Import Excel · Unduh Excel · Unduh PDF · Kirim sekarang · Suara: nyala / Suara: mati / Nyalakan suara · Login · Logout.
 
 ## URL rules
 
 - Lowercase Indonesian words, hyphens, singular nouns.
 - IDs are numeric database IDs, never NIS or names.
-- Query params `snake_case` Indonesian (`tanggal`, `kelas`, `cari`); `page` is the only English one.
+- Query params `snake_case` Indonesian (`tanggal`, `kelas`, `status`, `cari`); `page` is the only English one.

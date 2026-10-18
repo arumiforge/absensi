@@ -2,30 +2,34 @@
 
 Update this file at the end of every task that changes the repo: keep
 "Current state", "Next" and "Open questions" current, and keep the log to the
-last 10 entries.
+last 10 entries. Stage status lives in `docs/tahapan.md`; update it there too.
 
-## Current state (2026-10-17)
+## Current state (2026-10-18)
 
-- Total overhaul (D-11) on branch `sky/gracious-gates-xd73xv`: the app is now 1 admin + students + morning QR scan + manual status + holidays + daily recap (Excel, PDF) + QR cards. Spec: `docs/spesifikasi.md`. 56 PHPUnit tests pass locally (MySQL 8.0 sandbox). Browser smoke test with a fake camera feed: scan, manual status, downloads all work.
-- Everything from the old phases (accounts per role, portal, school years, placements, attributes, photos, WA, activity log, system check, login lockout, kiosk plans) and `docs/00`–`docs/15` were removed.
+- The minimal QR attendance app (D-11) is on `main`, with local-first scan (D-12), scan sounds (D-13), and the reworked recap page. QR cards are made outside the app. Stages 1–6 of `docs/tahapan.md` are done in code; 64 PHPUnit tests pass (MySQL 8.0 sandbox), not yet run on Laragon.
+- spensada.web.id still ran the old full app from `main` before the minimal app was merged, so `/login` returned 500. The server needs `main` pulled and a fresh database.
+- Docs: `docs/spesifikasi.md` (what the app does) and `docs/tahapan.md` (stages and status). Nothing else in `docs/`.
 
 ## Next
 
-1. Owner: on the server, `copy env-example-production .env` and `php spark key:generate`, then create a fresh empty database `absensi` (old tables cannot be migrated), run `php spark migrate` and `php spark admin:password` on Laragon, run `composer test`, print one page of QR cards and test scanning with the school webcam/phone over HTTPS.
+1. Owner: set `main` as the GitHub default branch if it is not yet, and delete the old branches `claude/fase-01-akun-akses-6jkkp8`, `sky/gracious-gates-xd73xv`, `ground/clever-wright-mwofec`.
+2. Owner: run `composer test` in Laragon (stage 7).
+3. Owner, on the server (stage 8): `git checkout main`, `git pull`, `composer install --no-dev`, `copy env-example-production .env`, `php spark key:generate`, empty database `absensi`, `php spark migrate`, `php spark admin:password`; check HTTPS works.
+4. Owner: trial at school (stage 9): import real students, scan the school's own QR cards with webcam and phone, pull the network cable mid-scan and plug it back in, check the recap on a phone.
 
 ## Open questions for the owner
 
-- D-07: the landscape logo says "PRIMA" — it is no longer used by any page; keep or delete the file?
-- OQ-20: production server location and HTTPS certificate (the camera needs HTTPS).
+- The landscape logo (`logo-landscape.*`, reads "PRIMA") and `ikon-512.png` are not used by any page. Keep or delete?
+- `format_wa()`, `format_rupiah()`, `format_percent()` in `format_helper.php` are unused. Keep or delete (with their tests)?
 
 ## Log
 
 | Date | Branch | Work |
 |---|---|---|
-| 2026-10-17 | `sky/gracious-gates-xd73xv` | Added `env-example-production` for https://spensada.web.id (database `absensi`, root without password; key generated on the server). |
-| 2026-10-17 | `sky/gracious-gates-xd73xv` | Total overhaul to the minimal QR attendance app (D-11). New schema (`admin`, `siswa`, `presensi`, `libur`), Presensi service, scan page with jsQR, recap Excel/PDF, QR cards, student import, holidays, password change, `admin:password` command. Removed old features, docs, and tests. |
-| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-02 L02-01 to L02-09 (now removed by D-11). |
-| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-01 L01-01 to L01-08 (now removed by D-11). |
-| 2026-10-10 | `claude/tahap-1-uh4a06` | FASE-00 foundation: config, MySQLi driver (+07:00), error pages, Bootstrap, format helper (kept). |
-| 2026-10-10 | `sky/busy-goodall-fswgci` | License decision D-10 (MIT). |
-| 2026-10-10 | `sky/zen-heisenberg-d72c3e` | Added `CLAUDE.md`, `.claude/memory/`, `.claude/settings.json`, `format_helper.php`, logo/favicon/app icons. |
+| 2026-10-18 | `claude/docs-overhaul-draft-1-wouicz` | Docs overhaul draft 1: new stage map `docs/tahapan.md` checked against code; removed outdated decisions, phase rules, and notes from memory (D-14). |
+| 2026-10-18 | `fix/rekap-page` | Recap page rework: previous/next day, status filter chips with counts, search, shared "Ubah status" dialog, phone layout. 64 PHPUnit tests pass. |
+| 2026-10-18 | `main` | Scan page sounds (D-13). |
+| 2026-10-18 | `main` | Removed QR card printing; local-first scan with batch sending (D-12). |
+| 2026-10-18 | `main` | Merged the minimal app into `main`, keeping history. |
+| 2026-10-17 | `sky/gracious-gates-xd73xv` | Added `env-example-production` for https://spensada.web.id. |
+| 2026-10-17 | `sky/gracious-gates-xd73xv` | Total overhaul to the minimal QR attendance app (D-11). |

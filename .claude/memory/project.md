@@ -20,10 +20,10 @@ All in `public/aset/logo/` unless noted. Do not edit, recolor, or crop them.
 
 | File | Use |
 |---|---|
-| `logo-sekolah.png` | School emblem (618×604, transparent). Default school logo, login page, slips. |
-| `logo-landscape.webp` | Landscape logo (1978×680). Headers, landing page. |
-| `logo-landscape.png` | Same, 900 px PNG. For mPDF and places without WebP. |
-| `ikon-192.png`, `ikon-512.png` | App / PWA icons (square, from the emblem). |
+| `logo-sekolah.png` | School emblem (618×604, transparent). Login page and panel navbar. |
+| `logo-landscape.webp`, `logo-landscape.png` | Landscape logo reading "PRIMA SMP 1 DAWE KUDUS". Not used by any page (open question in `progress.md`). |
+| `ikon-192.png` | Square icon from the emblem. Error pages. |
+| `ikon-512.png` | Square icon from the emblem. Not used by any page. |
 | `favicon-32.png` | PNG favicon. |
 | `public/favicon.ico` | Favicon (16, 32, 48 px). |
 | `public/apple-touch-icon.png` | iOS home-screen icon (180 px, white background). |
@@ -41,9 +41,9 @@ Head tags for every layout:
 | Users | Device focus |
 |---|---|
 | One admin (the only account) | Responsive: desktop and phone. |
-| Scan page (`/panel/scan`) | Laptop webcam or phone camera, Chrome/Edge, HTTPS, online. |
+| Scan page (`/panel/scan`) | Laptop webcam or phone camera, Chrome/Edge, HTTPS. Local-first: online to open the page, then scans keep working through short outages. |
 
-Students have no account; they only show their QR card.
+Students have no account; they only show their QR card (made by the school outside the app; QR = NIS).
 
 ## Stack
 
@@ -54,10 +54,10 @@ Students have no account; they only show their QR card.
 | Frontend | Server-rendered HTML + vanilla JS, **standard Bootstrap 5.3** (no custom CSS theme) |
 | Assets | Minified vendor files (`*.min.css`, `*.min.js`) served from `public/aset/vendor/<lib>/<version>/`. No CDN. |
 | Spreadsheet | `phpoffice/phpspreadsheet` (student import, recap XLSX) |
-| PDF | `mpdf/mpdf` (recap PDF, QR cards) |
-| QR | `chillerlan/php-qrcode` (cards), jsQR 1.4.0 in `public/aset/vendor/jsqr/` (camera) |
+| PDF | `mpdf/mpdf` (recap PDF) |
+| QR | jsQR 1.4.0 in `public/aset/vendor/jsqr/` (camera); no QR generator (D-12) |
 | Local dev | Windows + Laragon + Nginx + MySQL, `https://spensada.test` |
-| Production | Windows + Laragon + Nginx + MySQL (see `decisions.md` D-01) |
+| Production | Windows + Laragon + Nginx + MySQL, `https://spensada.web.id` (see `decisions.md` D-01) |
 | Time zone | `Asia/Jakarta` (WIB) everywhere |
 
 Write technical instructions for Windows + Laragon + Nginx (PowerShell or

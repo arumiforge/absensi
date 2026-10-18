@@ -4,13 +4,13 @@
 |---|---|---|
 | Chat replies to the owner | **English** | Always, even if the owner writes in Indonesian. Do not switch languages to match them. |
 | Code comments, docblocks | **English** | |
-| Commit messages, PR titles and bodies, branch names | **English** | Branch names use the phase ID, e.g. `fase-02-sekolah-siswa` (slug may be Indonesian). |
+| Commit messages, PR titles and bodies, branch names | **English** | Branch slugs may be Indonesian, e.g. `docs/tahapan`. |
 | Prompts to sub-agents / parallel agents | **English** | Include the UI-text rule below in every prompt that touches views or messages. |
 | Log messages, exception messages (internal) | **English** | Never shown to users as-is. |
 | Test method names and test descriptions | **English** | |
 | Files in `.claude/` and `CLAUDE.md` | **English** | |
 | Project specs in `docs/` | Indonesian | Existing language; keep it when editing docs. |
-| **UI text** (labels, buttons, menus, flash messages, validation errors, emails/WA, PDF, exports) | **Indonesian** | Friendly, non-technical. See below. |
+| **UI text** (labels, buttons, menus, flash messages, validation errors, PDF, Excel) | **Indonesian** | Friendly, non-technical. See below. |
 | **URL paths and query parameters** | **Indonesian** | Lowercase kebab-case paths, `snake_case` params. |
 
 ## Identifiers in code
@@ -26,7 +26,7 @@
 
 In short:
 
-- Address staff as **"Anda"**, students as **"kamu"**. Login page, slips, PDF, public pages: formal, no "kamu".
+- Address the admin as **"Anda"**. Login page and PDF: formal.
 - Short, active, friendly sentences. Buttons are verbs: "Simpan", "Kirim", "Batalkan".
 - Error messages say what happened and what to do next. Never blame the user. Never show codes, stack traces, SQL, or English jargon ("invalid", "error", "null", "submit", "request").
 - Use glossary words only (`glossary.md`), e.g. "Kelas" not "Rombel" on screen.
@@ -45,13 +45,13 @@ Examples:
 ## Example: the same feature in each language
 
 ```php
-// Reject requests for dates before the system start date .
-if ($tanggal < $statusMulai) {
-    return redirect()->to(url_to('panel.presensi_manual.index'))
-        ->with('galat', 'Tanggal ini sebelum Spensada mulai dipakai. Pilih tanggal lain.');
+// Holidays need a short reason so the recap can show it.
+if ($keterangan === '' || mb_strlen($keterangan) > 100) {
+    return redirect()->back()->withInput()
+        ->with('galat', 'Isi keterangan libur, paling panjang 100 karakter.');
 }
 ```
 
 - Comment: English. Message: friendly Indonesian. Route name and variables from docs: unchanged.
-- Commit: `feat(prs-06): reject manual attendance before start date`
-- URL: `/panel/presensi-manual`
+- Commit: `fix(libur): require a holiday reason`
+- URL: `/panel/libur`
