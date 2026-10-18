@@ -57,6 +57,14 @@ Bunyi dibuat di browser (Web Audio API), tanpa file suara.
 - Tombol "Suara" menyalakan atau mematikan bunyi. Pilihan disimpan di browser itu.
 - Browser baru mengizinkan bunyi setelah halaman disentuh atau diklik. Bila bunyi belum aktif, tombol bertuliskan "Nyalakan suara"; sentuh tombol itu sekali setelah membuka halaman scan.
 
+### 2.3 Tampilan halaman scan
+
+- Tombol "Layar penuh" menampilkan kamera dan hasil scan saja, tanpa menu, dengan tulisan besar agar terbaca siswa dari jarak dekat. Tombol "Keluar layar penuh" atau tombol Esc kembali ke tampilan biasa. Tombol tidak tampil di browser yang tidak mendukung layar penuh (misalnya iPhone).
+- Selama halaman scan terbuka, layar perangkat dijaga tetap menyala agar kamera tidak berhenti. Bila browser tidak mengizinkan (misalnya mode hemat baterai), layar bisa mati seperti biasa.
+- Bila perangkat punya lebih dari 1 kamera, admin bisa memilih kamera dari daftar. Pilihan disimpan di browser itu.
+- Hasil scan terakhir tetap tampil sampai ada scan berikutnya.
+- Bila kamera berhenti (misalnya webcam dicabut), halaman menampilkan pesan untuk memeriksa kamera lalu memuat ulang halaman.
+
 ## 3. Data
 
 | Tabel | Kolom |

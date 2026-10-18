@@ -31,7 +31,7 @@ disagree, the spec wins — fix this file. Need a new word? Ask the owner.
 
 ## Buttons
 
-Tambah siswa · Ubah · Ubah status · Simpan · Hapus · Batal · Cari · Tampilkan · Hari ini · Import · Import Excel · Unduh Excel · Unduh PDF · Kirim sekarang · Suara: nyala / Suara: mati / Nyalakan suara · Login · Logout.
+Tambah siswa · Ubah · Ubah status · Simpan · Hapus · Batal · Cari · Tampilkan · Hari ini · Import · Import Excel · Unduh Excel · Unduh PDF · Kirim sekarang · Suara: nyala / Suara: mati / Nyalakan suara · Layar penuh / Keluar layar penuh · Login · Logout.
 
 ## URL rules
 
