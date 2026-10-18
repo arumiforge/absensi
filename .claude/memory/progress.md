@@ -12,10 +12,9 @@ last 10 entries. Stage status lives in `docs/tahapan.md`; update it there too.
 
 ## Next
 
-1. Owner: delete the 6 old remote branches on GitHub (all already merged into `main`, no open PRs; the cloud session could not delete them, HTTP 403): `claude/docs-overhaul-draft-1-wouicz`, `claude/fase-01-akun-akses-6jkkp8`, `claude/perbaikan-scan-kios-1tdsxm`, `fix/rekap-page`, `ground/clever-wright-mwofec`, `sky/gracious-gates-xd73xv`. Keep `main` as the default branch. From now on only `main` is used (D-16).
-2. Owner: run `composer test` in Laragon (stage 7).
-3. Owner, on the server (stage 8): `git checkout main`, `git pull`, `composer install --no-dev`, `copy env-example-production .env`, `php spark key:generate`, empty database `absensi`, `php spark migrate`, `php spark admin:password`; check HTTPS works.
-4. Owner: trial at school (stage 9): import real students, scan the school's own QR cards with webcam and phone, pull the network cable mid-scan and plug it back in, check the recap on a phone.
+1. Owner: run `composer test` in Laragon (stage 7).
+2. Owner, on the server (stage 8): `git checkout main`, `git pull`, `composer install --no-dev`, `copy env-example-production .env`, `php spark key:generate`, empty database `absensi`, `php spark migrate`, `php spark admin:password`; check HTTPS works.
+3. Owner: trial at school (stage 9): import real students, scan the school's own QR cards with webcam and phone, pull the network cable mid-scan and plug it back in, check the recap on a phone.
 
 ## Open questions for the owner
 
@@ -25,6 +24,7 @@ last 10 entries. Stage status lives in `docs/tahapan.md`; update it there too.
 
 | Date | Branch | Work |
 |---|---|---|
+| 2026-10-18 | `main` | Owner deleted the 6 old branches; `main` is the only branch on GitHub. |
 | 2026-10-18 | `main` | D-16: only `main` from now on; checked that all 6 old branches are fully merged (0 commits ahead of `main`, no open PRs); branch rule updated in `CLAUDE.md` and `git-workflow.md`. |
 | 2026-10-18 | `claude/perbaikan-scan-kios-1tdsxm` | Scan page fixes (shared queue across tabs, re-scan after a server rejection, server errors not shown as lost connection, camera-stopped message) and D-15: full screen, wake lock, camera picker. App version 1.4.0. |
 | 2026-10-18 | `claude/docs-overhaul-draft-1-wouicz` | Docs overhaul draft 2: owner approved deleting the unused landscape logo, `ikon-512.png`, and `format_wa()`/`format_rupiah()`/`format_percent()` with their tests. |
@@ -34,4 +34,3 @@ last 10 entries. Stage status lives in `docs/tahapan.md`; update it there too.
 | 2026-10-18 | `main` | Removed QR card printing; local-first scan with batch sending (D-12). |
 | 2026-10-18 | `main` | Merged the minimal app into `main`, keeping history. |
 | 2026-10-17 | `sky/gracious-gates-xd73xv` | Added `env-example-production` for https://spensada.web.id. |
-| 2026-10-17 | `sky/gracious-gates-xd73xv` | Total overhaul to the minimal QR attendance app (D-11). |
