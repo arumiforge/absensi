@@ -6,6 +6,7 @@ last 10 entries.
 
 ## Current state (2026-10-18)
 
+- 2026-10-18: recap page rework on branch `fix/rekap-page` (PR open, not merged yet).
 - 2026-10-18: QR card printing removed and the scan page made local-first (D-12): scans are judged in the browser, kept in `localStorage`, and sent in background batches (≤ 100 every 5 s); the server re-checks each scan with its device time. 62 PHPUnit tests pass (MySQL 8.0 sandbox); browser smoke test with a fake camera (online, offline, reload, resend) passes.
 - 2026-10-18: the minimal app is now on `main` (merged from `claude/fase-01-akun-akses-6jkkp8`, history kept). Before this, spensada.web.id ran the old full app from `main` against the minimal app's database setup, so `/login` and `/logo` returned 500. Old branches `claude/fase-01-akun-akses-6jkkp8`, `sky/gracious-gates-xd73xv`, `ground/clever-wright-mwofec` still to be deleted by the owner (the session could not delete them).
 - Total overhaul (D-11) on branch `sky/gracious-gates-xd73xv`: the app is now 1 admin + students + morning QR scan + manual status + holidays + daily recap (Excel, PDF) + QR cards. Spec: `docs/spesifikasi.md`. 56 PHPUnit tests pass locally (MySQL 8.0 sandbox). Browser smoke test with a fake camera feed: scan, manual status, downloads all work.
@@ -26,6 +27,7 @@ last 10 entries.
 
 | Date | Branch | Work |
 |---|---|---|
+| 2026-10-18 | `fix/rekap-page` | Recap page rework: previous/next day, status filter chips with counts, search, one shared "Ubah status" dialog (`rekap.js`), compact phone layout, distinct status colours, filters kept after saving. HTML for 288 students 467 KB → 273 KB. 64 PHPUnit tests pass; browser flow check passes. |
 | 2026-10-18 | `main` | Owner confirmed the scan sounds (D-13). |
 | 2026-10-18 | `main` | Scan page sounds (D-13): Web Audio tones per result, one warning when sending starts failing, "Suara" toggle. Browser check with recorded tones passes. |
 | 2026-10-18 | `main` | Removed QR card printing (route, view, chillerlan/php-qrcode). Local-first scan: `Presensi::dataScan()` + `scanBanyak()`, JSON batch `POST /panel/scan`, `scan.js` with localStorage queue, server-clock offset, retry and "Kirim sekarang". Spec §2.1 added. |
@@ -35,4 +37,3 @@ last 10 entries.
 | 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-02 L02-01 to L02-09 (now removed by D-11). |
 | 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-01 L01-01 to L01-08 (now removed by D-11). |
 | 2026-10-10 | `claude/tahap-1-uh4a06` | FASE-00 foundation: config, MySQLi driver (+07:00), error pages, Bootstrap, format helper (kept). |
-| 2026-10-10 | `sky/busy-goodall-fswgci` | License decision D-10 (MIT). |

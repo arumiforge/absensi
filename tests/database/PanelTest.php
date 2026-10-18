@@ -99,6 +99,49 @@ final class PanelTest extends CIUnitTestCase
         $this->assertStringContainsString('Data belum lengkap', session('galat'));
     }
 
+    public function testRekapFiltersByStatusAndSearch(): void
+    {
+        $this->db->table('siswa')->insert(['nis' => '0013', 'nama' => 'Ani Lestari', 'kelas' => '7B', 'created_at' => '2026-10-01 08:00:00']);
+        $ani = (int) $this->db->insertID();
+        $this->db->table('presensi')->insert(['siswa_id' => $ani, 'tanggal' => '2026-10-13', 'status' => 'izin', 'keterangan' => 'Acara keluarga']);
+
+        $izin = $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&status=izin');
+        $izin->assertSee('Ani Lestari');
+        $izin->assertSee('Acara keluarga');
+        $izin->assertDontSee('Budi');
+        $izin->assertSee('Menampilkan 1 dari 2 siswa.');
+
+        // Budi has no record yet at 06:40.
+        $belum = $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&status=belum');
+        $belum->assertSee('Budi');
+        $belum->assertDontSee('Ani Lestari');
+
+        $cari = $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&cari=lestari');
+        $cari->assertSee('Ani Lestari');
+        $cari->assertDontSee('Budi');
+        $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&cari=0012')->assertSee('Budi');
+        $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&cari=zzz')->assertSee('Tidak ada siswa yang cocok.');
+
+        // An unknown status shows everyone.
+        $semua = $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&status=libur');
+        $semua->assertSee('Budi');
+        $semua->assertSee('Ani Lestari');
+    }
+
+    public function testRekapDateNavigationAndSaveKeepsFilters(): void
+    {
+        $html = (string) $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&kelas=7A')->response()->getBody();
+        $this->assertStringContainsString('tanggal=2026-10-12&amp;kelas=7A', $html);
+        $this->assertStringContainsString('tanggal=2026-10-14&amp;kelas=7A', $html);
+        $this->assertStringNotContainsString('Hari ini</a>', $html);
+        $this->assertStringContainsString('Hari ini</a>', (string) $this->kirim('GET', 'panel/rekap?tanggal=2026-10-12')->response()->getBody());
+
+        $siswa = $this->db->table('siswa')->get()->getRowArray();
+        $this->kirim('POST', 'panel/rekap', ['siswa_id' => $siswa['id'], 'tanggal' => '2026-10-13', 'status' => 'sakit', 'keterangan' => '', 'kelas' => '7A', 'filter_status' => 'belum', 'cari' => 'bud'])
+            ->assertRedirectTo('https://example.com/panel/rekap?tanggal=2026-10-13&kelas=7A&status=belum&cari=bud#siswa-' . $siswa['id']);
+        $this->seeInDatabase('presensi', ['siswa_id' => $siswa['id'], 'status' => 'sakit', 'keterangan' => null]);
+    }
+
     public function testRekapDownloads(): void
     {
         $excel = $this->kirim('GET', 'panel/rekap/excel?tanggal=2026-10-13&kelas=7A');
