@@ -6,7 +6,7 @@ last 10 entries.
 
 ## Current state (2026-10-18)
 
-- 2026-10-18: recap page rework on branch `fix/rekap-page` (PR open, not merged yet).
+- 2026-10-18: recap page rework merged (arumiforge/absensi#3): day navigation, status filter, search, shared "Ubah status" dialog, phone layout. 64 PHPUnit tests pass.
 - 2026-10-18: QR card printing removed and the scan page made local-first (D-12): scans are judged in the browser, kept in `localStorage`, and sent in background batches (≤ 100 every 5 s); the server re-checks each scan with its device time. 62 PHPUnit tests pass (MySQL 8.0 sandbox); browser smoke test with a fake camera (online, offline, reload, resend) passes.
 - 2026-10-18: the minimal app is now on `main` (merged from `claude/fase-01-akun-akses-6jkkp8`, history kept). Before this, spensada.web.id ran the old full app from `main` against the minimal app's database setup, so `/login` and `/logo` returned 500. Old branches `claude/fase-01-akun-akses-6jkkp8`, `sky/gracious-gates-xd73xv`, `ground/clever-wright-mwofec` still to be deleted by the owner (the session could not delete them).
 - Total overhaul (D-11) on branch `sky/gracious-gates-xd73xv`: the app is now 1 admin + students + morning QR scan + manual status + holidays + daily recap (Excel, PDF) + QR cards. Spec: `docs/spesifikasi.md`. 56 PHPUnit tests pass locally (MySQL 8.0 sandbox). Browser smoke test with a fake camera feed: scan, manual status, downloads all work.
@@ -16,7 +16,7 @@ last 10 entries.
 
 1. Owner: set `main` as the GitHub default branch if it is not yet. On the server: `git checkout main`, `git pull`, `composer install --no-dev`.
 2. Owner: on the server, `copy env-example-production .env` and `php spark key:generate`, then create a fresh empty database `absensi` (old tables cannot be migrated), run `php spark migrate` and `php spark admin:password` on Laragon, run `composer test`, and test scanning with the school's own QR cards (QR = NIS) and webcam/phone over HTTPS.
-3. Owner: after pulling the 2026-10-18 change, run `composer install --no-dev` on the server (drops chillerlan/php-qrcode). On the scan page: scan, pull the network cable, scan again, plug it back in, and check the recap.
+3. Owner: after pulling the 2026-10-18 changes, run `composer install --no-dev` on the server (drops chillerlan/php-qrcode). On the scan page: scan, pull the network cable, scan again, plug it back in, and check the recap (try the Alpa filter and the Ubah status window on a phone).
 
 ## Open questions for the owner
 
