@@ -2,30 +2,29 @@
 
 Update this file at the end of every task that changes the repo: keep
 "Current state", "Next" and "Open questions" current, and keep the log to the
-last 10 entries.
+last 10 entries. Stage status lives in `docs/tahapan.md`; update it there too.
 
-## Current state (2026-10-17)
+## Current state (2026-10-18)
 
-- Total overhaul (D-11) on branch `sky/gracious-gates-xd73xv`: the app is now 1 admin + students + morning QR scan + manual status + holidays + daily recap (Excel, PDF) + QR cards. Spec: `docs/spesifikasi.md`. 56 PHPUnit tests pass locally (MySQL 8.0 sandbox). Browser smoke test with a fake camera feed: scan, manual status, downloads all work.
-- Everything from the old phases (accounts per role, portal, school years, placements, attributes, photos, WA, activity log, system check, login lockout, kiosk plans) and `docs/00`–`docs/15` were removed.
+- The minimal QR attendance app (D-11) is on `main`. Stages 1–7 of `docs/tahapan.md` are done in code; 56 PHPUnit tests exist (last run passed on MySQL 8.0, not yet on Laragon).
+- Docs: `docs/spesifikasi.md` (what the app does) and `docs/tahapan.md` (stages and status). Nothing else in `docs/`.
 
 ## Next
 
-1. Owner: on the server, `copy env-example-production .env` and `php spark key:generate`, then create a fresh empty database `absensi` (old tables cannot be migrated), run `php spark migrate` and `php spark admin:password` on Laragon, run `composer test`, print one page of QR cards and test scanning with the school webcam/phone over HTTPS.
+1. Owner: run `composer test` in Laragon (stage 8).
+2. Owner: set up the school server (stage 9): `copy env-example-production .env`, `php spark key:generate`, empty database `absensi`, `php spark migrate`, `php spark admin:password`, HTTPS certificate.
+3. Owner: trial at school (stage 10): import real students, print one page of QR cards, scan with webcam and phone over HTTPS, download the recap.
 
 ## Open questions for the owner
 
-- D-07: the landscape logo says "PRIMA" — it is no longer used by any page; keep or delete the file?
-- OQ-20: production server location and HTTPS certificate (the camera needs HTTPS).
+- The landscape logo (`logo-landscape.*`, reads "PRIMA") and `ikon-512.png` are not used by any page. Keep or delete?
+- `format_wa()`, `format_rupiah()`, `format_percent()` in `format_helper.php` are unused. Keep or delete (with their tests)?
+- Production server location and HTTPS certificate source (the camera needs HTTPS).
 
 ## Log
 
 | Date | Branch | Work |
 |---|---|---|
-| 2026-10-17 | `sky/gracious-gates-xd73xv` | Added `env-example-production` for https://spensada.web.id (database `absensi`, root without password; key generated on the server). |
-| 2026-10-17 | `sky/gracious-gates-xd73xv` | Total overhaul to the minimal QR attendance app (D-11). New schema (`admin`, `siswa`, `presensi`, `libur`), Presensi service, scan page with jsQR, recap Excel/PDF, QR cards, student import, holidays, password change, `admin:password` command. Removed old features, docs, and tests. |
-| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-02 L02-01 to L02-09 (now removed by D-11). |
-| 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-01 L01-01 to L01-08 (now removed by D-11). |
-| 2026-10-10 | `claude/tahap-1-uh4a06` | FASE-00 foundation: config, MySQLi driver (+07:00), error pages, Bootstrap, format helper (kept). |
-| 2026-10-10 | `sky/busy-goodall-fswgci` | License decision D-10 (MIT). |
-| 2026-10-10 | `sky/zen-heisenberg-d72c3e` | Added `CLAUDE.md`, `.claude/memory/`, `.claude/settings.json`, `format_helper.php`, logo/favicon/app icons. |
+| 2026-10-18 | `claude/docs-overhaul-draft-1-wouicz` | Docs overhaul draft 1: new stage map `docs/tahapan.md` checked against code; removed outdated decisions, phase rules, and notes from memory (D-12). |
+| 2026-10-17 | `sky/gracious-gates-xd73xv` | Added `env-example-production` for https://spensada.web.id. |
+| 2026-10-17 | `sky/gracious-gates-xd73xv` | Total overhaul to the minimal QR attendance app (D-11). |

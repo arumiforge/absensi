@@ -2,7 +2,7 @@
 
 Aplikasi presensi pagi dengan QR code untuk SMP 1 Dawe, Kudus. Siswa menunjukkan kartu QR ke kamera, status Hadir atau Terlambat tercatat otomatis, dan admin mengunduh rekap harian dalam Excel atau PDF.
 
-Spesifikasi lengkap: [`docs/spesifikasi.md`](docs/spesifikasi.md).
+Spesifikasi lengkap: [`docs/spesifikasi.md`](docs/spesifikasi.md). Tahapan proyek dan posisinya sekarang: [`docs/tahapan.md`](docs/tahapan.md).
 
 ## Fitur
 

@@ -3,11 +3,11 @@
 ## Branches
 
 - `main` is the **only long-lived branch**.
-- **One implementation phase = one branch**, created from the latest `main`:
-  `fase-<NN>-<slug>`, e.g. `fase-00-fondasi`, `fase-02-sekolah-siswa`.
-- Docs-only or memory-only changes: `docs/<slug>`.
-- Merge to `main` through one PR per phase, then **delete the branch** (local and remote).
-- If the environment assigns a branch name (cloud sessions), use it, and put the phase ID in the PR title.
+- **One task = one branch**, created from the latest `main`: `<type>/<slug>`,
+  e.g. `fix/scan-jam-tutup`, `docs/tahapan`. Stages are listed in
+  `docs/tahapan.md`; name the stage in the PR title when the task belongs to one.
+- Merge to `main` through one PR per branch, then **delete the branch** (local and remote).
+- If the environment assigns a branch name (cloud sessions), use it.
 - Never force-push `main`. Never rewrite history that is already on `main`.
 
 ## Commits
@@ -34,12 +34,12 @@ Format (English, imperative, ≤ 72 chars, no trailing period):
 | `build` | Composer, vendor assets, Laragon/Nginx config |
 | `chore` | Anything else (gitignore, tooling) |
 
-Scope: an area (`scan`, `rekap`, `siswa`, `libur`, `memory`, `format`). Examples:
+Scope: an area (`scan`, `rekap`, `siswa`, `libur`, `kartu`, `login`, `memory`, `format`). Examples:
 
 ```text
-feat(akn-01): add staff login form
-fix(prs-05): count late arrivals after tolerance minute
-docs(memory): record bootstrap decision
+feat(rekap): add class filter to recap PDF
+fix(scan): reject scans on holidays
+docs(tahapan): mark server setup done
 build(vendor): add bootstrap 5.3.8 minified files
 ```
 

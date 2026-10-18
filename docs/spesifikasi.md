@@ -68,3 +68,5 @@ Sesi admin berakhir setelah 8 jam. Mengganti password mengakhiri sesi di perangk
 - Library: PhpSpreadsheet (Excel), mPDF (PDF), chillerlan/php-qrcode (kartu QR), jsQR 1.4.0 (membaca QR dari kamera).
 - Kamera hanya bisa dibuka lewat `https` (atau `localhost`), di Chrome/Edge.
 - Membuat admin atau mengganti password yang lupa: `php spark admin:password`.
+- Nama sekolah di halaman login, rekap, dan kartu QR diambil dari `Config\Spensada::$namaSekolah`.
+- Urutan kerja dan posisi proyek: [`tahapan.md`](tahapan.md).
