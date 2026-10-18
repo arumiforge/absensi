@@ -63,7 +63,7 @@ Bukti: `app/Controllers/Panel/Libur.php`, `app/Models/LiburModel.php`, `Presensi
 
 ## 7. Pengujian otomatis — Ada, perlu dijalankan di Laragon
 
-63 pengujian PHPUnit: 33 unit (`tests/unit/`) dan 30 dengan database (`tests/database/`). Menurut catatan terakhir semuanya lulus di MySQL 8.0 (sebelum helper format WA, Rupiah, dan persen yang tidak dipakai dihapus), tetapi belum dijalankan di Laragon dengan MySQL 8.4.
+68 pengujian PHPUnit: 33 unit (`tests/unit/`) dan 35 dengan database (`tests/database/`). Semuanya lulus di MySQL 8.0 pada 18 Oktober 2026, tetapi belum dijalankan di Laragon dengan MySQL 8.4.
 
 Yang belum: jalankan `composer test` di Laragon dan catat hasilnya.
 
@@ -75,14 +75,15 @@ Langkah:
 
 1. Di GitHub, jadikan `main` cabang utama bila belum, dan hapus cabang lama.
 2. Di server: `git checkout main`, `git pull`, `composer install --no-dev`.
-3. `copy env-example-production .env`, lalu `php spark key:generate`.
+3. `copy env-example-production .env`, lalu `php spark key:generate`. Isi lainnya sudah siap, termasuk `app.CSPEnabled = false` (bila `true`, ikon Bootstrap terblokir).
 4. Buat database kosong `absensi` (tabel versi lama tidak bisa dipindahkan).
-5. `php spark migrate`, lalu `php spark admin:password`.
-6. Pastikan situs terbuka lewat `https` (kamera hanya jalan lewat `https`).
+5. `php spark migrate`.
+6. Untuk mencoba dengan data contoh: `php spark data:contoh` (200 siswa, riwayat presensi, libur, dan akun admin). Kartu QR contoh: `contoh/kartu-qr-contoh.pdf`. Tanpa data contoh: `php spark admin:password`.
+7. Pastikan situs terbuka lewat `https` (kamera hanya jalan lewat `https`).
 
 ## 9. Uji coba di sekolah — Belum
 
-1. Import data siswa asli.
+1. Hapus data contoh (`php spark data:contoh --kosongkan`), lalu import data siswa asli.
 2. Scan kartu QR sekolah dengan webcam laptop dan HP di Chrome/Edge.
 3. Cabut kabel jaringan di tengah scan, lalu pasang lagi. Pastikan semua scan terkirim.
 4. Cek rekap hari itu di HP, coba saringan Alpa dan "Ubah status", unduh Excel dan PDF.

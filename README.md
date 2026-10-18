@@ -33,7 +33,9 @@ php spark migrate
 php spark admin:password
 ```
 
-Perintah terakhir menampilkan username dan password admin satu kali. Catat, login di `/login`, lalu ganti password di menu **Ganti password**. Bila admin lupa password, jalankan `php spark admin:password` lagi.
+Untuk mencoba aplikasi dengan data contoh (200 siswa, riwayat presensi 10 hari sekolah, dan libur), jalankan `php spark data:contoh` sebagai ganti `php spark admin:password`. Kartu QR siswa contoh ada di `contoh/kartu-qr-contoh.pdf`. Sebelum dipakai sungguhan, hapus data contoh dengan `php spark data:contoh --kosongkan`.
+
+Perintah `admin:password` (juga dijalankan oleh `data:contoh` bila belum ada admin) menampilkan username dan password admin satu kali. Catat, login di `/login`, lalu ganti password di menu **Ganti password**. Bila admin lupa password, jalankan `php spark admin:password` lagi.
 
 Aplikasi harus dibuka lewat `https`, karena kamera dan cookie login hanya bekerja di koneksi aman.
 
