@@ -3,6 +3,7 @@
 // the background, so a scan never waits for the network or the database.
 (() => {
   const KUNCI = 'spensada.antrean-scan';
+  const KUNCI_SUARA = 'spensada.suara';
   const BATCH = 100;
   const JEDA_KIRIM = 5000;
   const WIB = 7 * 3600 * 1000;
@@ -14,6 +15,7 @@
   const infoAntrean = document.getElementById('antrean');
   const tombolKirim = document.getElementById('kirim-sekarang');
   const kotakDitolak = document.getElementById('ditolak');
+  const tombolSuara = document.getElementById('suara');
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   const WARNA = { hadir: 'success', terlambat: 'warning' };
@@ -44,6 +46,65 @@
     }
   };
   let antrean = baca();
+
+  // Short tones from the Web Audio API, so no sound files are needed.
+  // Each tone: [frequency in Hz (0 = pause), seconds, wave shape].
+  const NADA = {
+    hadir: [[880, 0.12], [1320, 0.18]],
+    terlambat: [[660, 0.15], [0, 0.08], [660, 0.15]],
+    sudah: [[520, 0.12]],
+    galat: [[220, 0.45, 'square']],
+    peringatan: [[440, 0.18], [330, 0.28]],
+  };
+  let audio = null;
+  let suaraNyala = true;
+  try {
+    suaraNyala = localStorage.getItem(KUNCI_SUARA) !== 'mati';
+  } catch {
+    // Storage blocked: sound stays on.
+  }
+
+  const perbaruiTombolSuara = () => {
+    const siap = audio && audio.state === 'running';
+    tombolSuara.textContent = !suaraNyala ? 'Suara: mati' : siap ? 'Suara: nyala' : 'Nyalakan suara';
+    tombolSuara.className = `btn btn-sm ${suaraNyala && !siap ? 'btn-warning' : 'btn-outline-secondary'}`;
+    tombolSuara.setAttribute('aria-pressed', String(suaraNyala && siap));
+  };
+
+  // Browsers only start sound after a tap or key press on the page.
+  const siapkanAudio = () => {
+    const Konteks = window.AudioContext || window.webkitAudioContext;
+    if (!audio && Konteks) {
+      audio = new Konteks();
+      audio.addEventListener('statechange', perbaruiTombolSuara);
+    }
+    if (audio && audio.state === 'suspended') {
+      audio.resume().catch(() => {});
+    }
+    perbaruiTombolSuara();
+  };
+
+  const bunyi = (jenis) => {
+    if (!suaraNyala || !audio || audio.state !== 'running') {
+      return;
+    }
+    let t = audio.currentTime;
+    for (const [frekuensi, lama, bentuk = 'sine'] of NADA[jenis]) {
+      if (frekuensi > 0) {
+        const osc = audio.createOscillator();
+        const gain = audio.createGain();
+        osc.type = bentuk;
+        osc.frequency.value = frekuensi;
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.3, t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + lama);
+        osc.connect(gain).connect(audio.destination);
+        osc.start(t);
+        osc.stop(t + lama + 0.02);
+      }
+      t += lama;
+    }
+  };
 
   const idBaru = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
   const statusScan = (jam) => (jam < data.jamMasuk ? 'hadir' : jam < data.jamTutup ? 'terlambat' : null);
@@ -120,6 +181,7 @@
       return;
     }
     mengirim = true;
+    const sebelumnya = gagal;
     const batch = antrean.slice(0, BATCH);
     const t1 = Date.now();
     try {
@@ -147,6 +209,7 @@
         const galat = json.hasil.filter((h) => h.hasil === 'galat');
         if (galat.length > 0) {
           tampilDitolak(galat, batch);
+          bunyi('peringatan');
         }
         gagal = '';
       }
@@ -154,6 +217,10 @@
       gagal = 'koneksi';
     }
     mengirim = false;
+    // Warn once when sending starts failing, not on every retry.
+    if (gagal && gagal !== 'csrf' && gagal !== sebelumnya) {
+      bunyi('peringatan');
+    }
     perbaruiInfo();
     if (!gagal && antrean.length > 0) {
       setTimeout(kirimAntrean, 0);
@@ -164,32 +231,38 @@
     const siswa = data.siswa[kunci(kode)];
     if (!siswa) {
       tampil('danger', 'Kode QR tidak dikenal. Pastikan kartu milik siswa yang terdaftar.');
+      bunyi('galat');
       return;
     }
     const [nama, kelas] = siswa;
     const { tanggal, jam } = sekarang();
     if (tanggal !== data.tanggal) {
       tampil('warning', 'Halaman scan ini dibuka kemarin.', 'Muat ulang halaman, lalu scan lagi.');
+      bunyi('peringatan');
       return;
     }
     if (data.libur) {
       tampil('danger', `Hari ini libur (${data.libur}). Presensi tidak dicatat.`);
+      bunyi('galat');
       return;
     }
     const ada = tercatat.get(kunci(kode));
     if (ada) {
       tampil('info', `${nama} sudah tercatat ${data.status[ada[0]]}${ada[1] ? ` pukul ${ada[1]}` : ''}.`, `Kelas ${kelas}`);
+      bunyi('sudah');
       return;
     }
     const status = statusScan(jam);
     if (!status) {
       tampil('danger', `Presensi pagi sudah ditutup pukul ${data.labelTutup}. Minta admin mengubah status bila perlu.`);
+      bunyi('galat');
       return;
     }
     antrean.push({ id: idBaru(), nis: kode.trim(), waktu: `${tanggal} ${jam}` });
     simpan();
     tercatat.set(kunci(kode), [status, labelJam(jam)]);
     tampil(WARNA[status], `${nama} tercatat ${data.status[status]}.`, `Kelas ${kelas} · pukul ${labelJam(jam)}`);
+    bunyi(status);
     perbaruiInfo();
   };
 
@@ -210,6 +283,28 @@
     }
     setTimeout(pindai, 150);
   };
+
+  tombolSuara.addEventListener('click', () => {
+    if (suaraNyala && audio && audio.state === 'running') {
+      suaraNyala = false;
+    } else {
+      suaraNyala = true;
+      siapkanAudio();
+    }
+    try {
+      localStorage.setItem(KUNCI_SUARA, suaraNyala ? 'nyala' : 'mati');
+    } catch {
+      // Storage blocked: the choice lasts until the page is closed.
+    }
+    perbaruiTombolSuara();
+    // A short test tone, once audio has started, so the admin hears that sound works.
+    if (suaraNyala && audio) {
+      audio.resume().then(() => bunyi('sudah')).catch(() => {});
+    }
+  });
+  document.addEventListener('pointerdown', siapkanAudio);
+  document.addEventListener('keydown', siapkanAudio);
+  siapkanAudio();
 
   tombolKirim.addEventListener('click', () => {
     gagal = '';
