@@ -55,15 +55,33 @@ final class PanelTest extends CIUnitTestCase
         $this->kirim('GET', 'panel/rekap', [], [])->assertRedirectTo('https://example.com/login');
     }
 
-    public function testScanRecordsAttendance(): void
+    public function testScanPageCarriesLocalData(): void
     {
-        $this->kirim('GET', 'panel/scan')->assertSee('jsQR.min.js');
+        $page = $this->kirim('GET', 'panel/scan');
 
-        $result = $this->kirim('POST', 'panel/scan', ['nis' => '0012']);
+        $page->assertSee('jsQR.min.js');
+        preg_match('#<script type="application/json" id="data-scan">(.*?)</script>#s', (string) $page->response()->getBody(), $m);
+        $data = json_decode($m[1], true);
+        $this->assertSame('2026-10-13', $data['tanggal']);
+        $this->assertSame(['Budi', '7A'], $data['siswa']['0012']);
+    }
+
+    public function testScanBatchRecordsAttendance(): void
+    {
+        $result = $this->kirimJson('panel/scan', ['scan' => [['id' => 'x1', 'nis' => '0012', 'waktu' => '2026-10-13 06:35:00']]]);
 
         $result->assertOK();
-        $this->assertSame('tercatat', json_decode($result->getJSON(), true)['hasil']);
-        $this->seeInDatabase('presensi', ['tanggal' => '2026-10-13', 'status' => 'hadir']);
+        $json = json_decode($result->getJSON(), true);
+        $this->assertSame([['id' => 'x1', 'hasil' => 'tercatat']], array_map(static fn (array $h): array => ['id' => $h['id'], 'hasil' => $h['hasil']], $json['hasil']));
+        $this->assertIsInt($json['jam']);
+        $this->seeInDatabase('presensi', ['tanggal' => '2026-10-13', 'status' => 'hadir', 'jam_scan' => '06:35:00']);
+    }
+
+    public function testScanBatchRejectsBadBody(): void
+    {
+        $this->kirimJson('panel/scan', ['scan' => [['id' => 'x1', 'nis' => '0012']]])->assertStatus(400);
+        $this->kirimJson('panel/scan', ['scan' => array_fill(0, 101, ['id' => 'x', 'nis' => '0012', 'waktu' => '2026-10-13 06:35:00'])])->assertStatus(400);
+        $this->seeNumRecords(0, 'presensi', []);
     }
 
     public function testRekapPageAndManualStatus(): void
@@ -81,6 +99,49 @@ final class PanelTest extends CIUnitTestCase
         $this->assertStringContainsString('Data belum lengkap', session('galat'));
     }
 
+    public function testRekapFiltersByStatusAndSearch(): void
+    {
+        $this->db->table('siswa')->insert(['nis' => '0013', 'nama' => 'Ani Lestari', 'kelas' => '7B', 'created_at' => '2026-10-01 08:00:00']);
+        $ani = (int) $this->db->insertID();
+        $this->db->table('presensi')->insert(['siswa_id' => $ani, 'tanggal' => '2026-10-13', 'status' => 'izin', 'keterangan' => 'Acara keluarga']);
+
+        $izin = $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&status=izin');
+        $izin->assertSee('Ani Lestari');
+        $izin->assertSee('Acara keluarga');
+        $izin->assertDontSee('Budi');
+        $izin->assertSee('Menampilkan 1 dari 2 siswa.');
+
+        // Budi has no record yet at 06:40.
+        $belum = $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&status=belum');
+        $belum->assertSee('Budi');
+        $belum->assertDontSee('Ani Lestari');
+
+        $cari = $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&cari=lestari');
+        $cari->assertSee('Ani Lestari');
+        $cari->assertDontSee('Budi');
+        $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&cari=0012')->assertSee('Budi');
+        $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&cari=zzz')->assertSee('Tidak ada siswa yang cocok.');
+
+        // An unknown status shows everyone.
+        $semua = $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&status=libur');
+        $semua->assertSee('Budi');
+        $semua->assertSee('Ani Lestari');
+    }
+
+    public function testRekapDateNavigationAndSaveKeepsFilters(): void
+    {
+        $html = (string) $this->kirim('GET', 'panel/rekap?tanggal=2026-10-13&kelas=7A')->response()->getBody();
+        $this->assertStringContainsString('tanggal=2026-10-12&amp;kelas=7A', $html);
+        $this->assertStringContainsString('tanggal=2026-10-14&amp;kelas=7A', $html);
+        $this->assertStringNotContainsString('Hari ini</a>', $html);
+        $this->assertStringContainsString('Hari ini</a>', (string) $this->kirim('GET', 'panel/rekap?tanggal=2026-10-12')->response()->getBody());
+
+        $siswa = $this->db->table('siswa')->get()->getRowArray();
+        $this->kirim('POST', 'panel/rekap', ['siswa_id' => $siswa['id'], 'tanggal' => '2026-10-13', 'status' => 'sakit', 'keterangan' => '', 'kelas' => '7A', 'filter_status' => 'belum', 'cari' => 'bud'])
+            ->assertRedirectTo('https://example.com/panel/rekap?tanggal=2026-10-13&kelas=7A&status=belum&cari=bud#siswa-' . $siswa['id']);
+        $this->seeInDatabase('presensi', ['siswa_id' => $siswa['id'], 'status' => 'sakit', 'keterangan' => null]);
+    }
+
     public function testRekapDownloads(): void
     {
         $excel = $this->kirim('GET', 'panel/rekap/excel?tanggal=2026-10-13&kelas=7A');
@@ -90,11 +151,6 @@ final class PanelTest extends CIUnitTestCase
         $pdf = $this->kirim('GET', 'panel/rekap/pdf?tanggal=2026-10-13');
         $pdf->assertHeader('Content-Type', 'application/pdf');
         $this->assertStringStartsWith('%PDF', $pdf->response()->getBody());
-    }
-
-    public function testQrCardsPdf(): void
-    {
-        $this->assertStringStartsWith('%PDF', $this->kirim('GET', 'panel/siswa/kartu?kelas=7A')->response()->getBody());
     }
 
     public function testStudentCrud(): void
@@ -134,6 +190,20 @@ final class PanelTest extends CIUnitTestCase
         $this->assertSame('Password sudah diganti.', session('sukses'));
 
         $this->kirim('GET', 'panel/rekap')->assertRedirectTo('https://example.com/login');
+    }
+
+    /**
+     * A background JSON request from the scan page, as the admin.
+     */
+    private function kirimJson(string $uri, array $body): TestResponse
+    {
+        Services::resetSingle('router');
+        Services::resetSingle('response');
+
+        return $this->withSession($this->sesi)
+            ->withHeaders(['X-CSRF-TOKEN' => service('security')->getHash(), 'X-Requested-With' => 'XMLHttpRequest', 'Content-Type' => 'application/json'])
+            ->withBody(json_encode($body))
+            ->call('POST', $uri);
     }
 
     /**

@@ -1,7 +1,7 @@
 # Indonesian locale formats
 
-Everything shown to users — views, flash messages, recap Excel and PDF, QR
-cards — uses these formats.
+Everything shown to users — views, flash messages, recap Excel and PDF —
+uses these formats.
 
 ## The rule
 

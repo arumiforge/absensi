@@ -5,13 +5,8 @@ namespace App\Controllers\Panel;
 use App\Controllers\BaseController;
 use App\Models\SiswaModel;
 use App\Services\ImportSiswa;
-use chillerlan\QRCode\Output\QRGdImagePNG;
-use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
-use CodeIgniter\HTTP\ResponseInterface;
-use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Throwable;
 
@@ -100,29 +95,6 @@ class Siswa extends BaseController
         }
 
         return redirect()->to(url_to('siswa'))->with('sukses', "Import selesai: {$hasil['baru']} siswa baru, {$hasil['diperbarui']} siswa diperbarui.");
-    }
-
-    /**
-     * Printable QR cards, 12 per A4 page. The QR holds the student's NIS.
-     */
-    public function kartu(): ResponseInterface
-    {
-        $kelas = trim((string) $this->request->getGet('kelas'));
-        $model = model(SiswaModel::class);
-        if ($kelas !== '') {
-            $model->where('kelas', $kelas);
-        }
-
-        $qr    = new QRCode(new QROptions(['outputInterface' => QRGdImagePNG::class, 'scale' => 8]));
-        $kartu = array_map(static fn (array $siswa): array => $siswa + ['qr' => $qr->render($siswa['nis'])], $model->orderBy('kelas')->orderBy('nama')->findAll());
-
-        $mpdf = new Mpdf(['tempDir' => WRITEPATH . 'cache/mpdf', 'format' => 'A4', 'margin_left' => 10, 'margin_right' => 10, 'margin_top' => 10, 'margin_bottom' => 10]);
-        $mpdf->SetTitle('Kartu QR siswa');
-        $mpdf->WriteHTML(view('panel/siswa/kartu', ['kartu' => $kartu]));
-
-        return $this->response->setBody($mpdf->OutputBinaryData())
-            ->setContentType('application/pdf', '')
-            ->setHeader('Content-Disposition', 'inline; filename="kartu-qr' . ($kelas === '' ? '' : '-' . preg_replace('/[^0-9A-Za-z]+/', '', $kelas)) . '.pdf"');
     }
 
     private function simpanData(?int $id): RedirectResponse

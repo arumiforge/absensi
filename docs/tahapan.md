@@ -11,16 +11,17 @@ Isi aplikasi mengikuti [`spesifikasi.md`](spesifikasi.md). Dokumen ini hanya men
 | 1 | Fondasi aplikasi | Selesai |
 | 2 | Akun admin dan login | Selesai |
 | 3 | Data siswa dan import | Selesai |
-| 4 | Kartu QR | Selesai |
-| 5 | Scan QR | Selesai di kode, belum diuji di sekolah |
-| 6 | Rekap harian dan status manual | Selesai |
-| 7 | Libur | Selesai |
-| 8 | Pengujian otomatis | Ada, perlu dijalankan ulang di Laragon |
-| 9 | Pemasangan di server sekolah | Belum |
-| 10 | Uji coba di sekolah | Belum |
-| 11 | Mulai dipakai harian | Belum |
+| 4 | Scan QR *local-first* | Selesai di kode, belum diuji di sekolah |
+| 5 | Rekap harian dan status manual | Selesai |
+| 6 | Libur | Selesai |
+| 7 | Pengujian otomatis | Ada, perlu dijalankan di Laragon |
+| 8 | Pemasangan di server sekolah | Sebagian |
+| 9 | Uji coba di sekolah | Belum |
+| 10 | Mulai dipakai harian | Belum |
 
-Arti status: **Selesai** berarti kode sudah ada di `main` dan sesuai spesifikasi. **Belum** berarti belum ada bukti di repo bahwa tahap itu sudah dikerjakan.
+Arti status: **Selesai** berarti kode sudah ada di `main` dan sesuai spesifikasi. **Sebagian** berarti sudah dimulai tetapi belum lengkap. **Belum** berarti belum ada bukti di repo bahwa tahap itu sudah dikerjakan.
+
+Kartu QR tidak lagi menjadi tahap: kartu dibuat sekolah di luar aplikasi, dengan isi QR = NIS.
 
 ## 1. Fondasi aplikasi — Selesai
 
@@ -40,58 +41,52 @@ Daftar siswa dengan cari dan filter kelas, tambah, ubah, hapus (presensinya ikut
 
 Bukti: `app/Controllers/Panel/Siswa.php`, `app/Services/ImportSiswa.php`, `app/Models/SiswaModel.php`, `app/Views/panel/siswa/`.
 
-## 4. Kartu QR — Selesai
+## 4. Scan QR *local-first* — Selesai di kode, belum diuji di sekolah
 
-PDF A4 berisi 12 kartu per halaman (3 kolom, 4 baris), isi QR = NIS. Bisa dicetak semua kelas atau 1 kelas.
+Halaman kamera dengan jsQR 1.4.0. Sebelum 07.00 Hadir, 07.00–07.59 Terlambat, mulai 08.00 ditolak. Hari Minggu dan tanggal libur ditolak. Scan ulang tidak mengubah catatan pertama. Scan diperiksa di perangkat, disimpan di browser, lalu dikirim ke server paling banyak 100 scan setiap 5 detik; server memeriksa ulang dengan jam scan dari perangkat. Bunyi berbeda untuk setiap hasil, dengan tombol "Suara".
 
-Bukti: `Siswa::kartu()` dan `app/Views/panel/siswa/kartu.php`.
+Bukti: `app/Controllers/Panel/Scan.php`, `app/Services/Presensi.php` (`dataScan()`, `scanBanyak()`, `scan()`, `statusScan()`), `app/Views/panel/scan.php`, `public/aset/js/scan.js`, `public/aset/vendor/jsqr/`.
 
-## 5. Scan QR — Selesai di kode, belum diuji di sekolah
+Yang belum: uji dengan kartu QR sekolah, webcam, dan HP lewat HTTPS, termasuk saat koneksi putus (lihat tahap 9).
 
-Halaman kamera dengan jsQR 1.4.0. Sebelum 07.00 Hadir, 07.00–07.59 Terlambat, mulai 08.00 ditolak. Hari Minggu dan tanggal libur ditolak. Scan ulang tidak mengubah catatan pertama.
+## 5. Rekap harian dan status manual — Selesai
 
-Bukti: `app/Controllers/Panel/Scan.php`, `app/Services/Presensi.php` (`scan()`, `statusScan()`), `public/aset/js/scan.js`, `public/aset/vendor/jsqr/`.
+Rekap per tanggal dengan tombol hari sebelumnya/berikutnya dan "Hari ini", saring per kelas dan per status, cari nama atau NIS. Alpa dihitung saat rekap ditampilkan (tanpa cron). Admin mengubah status lewat jendela "Ubah status", termasuk Kosongkan. Unduh Excel dan PDF.
 
-Yang belum: uji dengan webcam dan HP sekolah lewat HTTPS (lihat tahap 10).
+Bukti: `app/Controllers/Panel/Rekap.php`, `Presensi::rekap()` dan `Presensi::ubah()`, `app/Views/panel/rekap.php`, `app/Views/panel/rekap_pdf.php`, `public/aset/js/rekap.js`.
 
-## 6. Rekap harian dan status manual — Selesai
-
-Rekap per tanggal, semua kelas atau 1 kelas. Alpa dihitung saat rekap ditampilkan (tanpa cron). Admin bisa mengubah status siswa mana pun di tanggal mana pun, termasuk Kosongkan. Unduh Excel dan PDF.
-
-Bukti: `app/Controllers/Panel/Rekap.php`, `Presensi::rekap()` dan `Presensi::ubah()`, `app/Views/panel/rekap.php`, `app/Views/panel/rekap_pdf.php`.
-
-## 7. Libur — Selesai
+## 6. Libur — Selesai
 
 Admin menandai dan menghapus tanggal libur. Hari Minggu otomatis libur.
 
 Bukti: `app/Controllers/Panel/Libur.php`, `app/Models/LiburModel.php`, `Presensi::libur()`.
 
-## 8. Pengujian otomatis — Ada, perlu dijalankan ulang di Laragon
+## 7. Pengujian otomatis — Ada, perlu dijalankan di Laragon
 
-56 pengujian PHPUnit: 34 unit (`tests/unit/`) dan 22 dengan database (`tests/database/`). Menurut catatan terakhir semuanya lulus di MySQL 8.0, tetapi belum dijalankan di Laragon dengan MySQL 8.4.
+64 pengujian PHPUnit: 34 unit (`tests/unit/`) dan 30 dengan database (`tests/database/`). Menurut catatan terakhir semuanya lulus di MySQL 8.0, tetapi belum dijalankan di Laragon dengan MySQL 8.4.
 
 Yang belum: jalankan `composer test` di Laragon dan catat hasilnya.
 
-## 9. Pemasangan di server sekolah — Belum
+## 8. Pemasangan di server sekolah — Sebagian
 
-Server Windows + Laragon + Nginx + MySQL, alamat `https://spensada.web.id`. File `env-example-production` sudah ada.
+Server Windows + Laragon + Nginx + MySQL sudah ada di `https://spensada.web.id`, tetapi masih menjalankan versi lama aplikasi. File `env-example-production` sudah ada.
 
 Langkah:
 
-1. `copy env-example-production .env`, lalu `php spark key:generate`.
-2. Buat database kosong `absensi` (tabel versi lama tidak bisa dipindahkan).
-3. `php spark migrate`, lalu `php spark admin:password`.
-4. Pasang sertifikat HTTPS (kamera hanya jalan lewat `https`).
+1. Di GitHub, jadikan `main` cabang utama bila belum, dan hapus cabang lama.
+2. Di server: `git checkout main`, `git pull`, `composer install --no-dev`.
+3. `copy env-example-production .env`, lalu `php spark key:generate`.
+4. Buat database kosong `absensi` (tabel versi lama tidak bisa dipindahkan).
+5. `php spark migrate`, lalu `php spark admin:password`.
+6. Pastikan situs terbuka lewat `https` (kamera hanya jalan lewat `https`).
 
-Belum diputuskan: lokasi server dan sumber sertifikat HTTPS.
-
-## 10. Uji coba di sekolah — Belum
+## 9. Uji coba di sekolah — Belum
 
 1. Import data siswa asli.
-2. Cetak 1 halaman kartu QR.
-3. Scan dengan webcam laptop dan HP sekolah di Chrome/Edge.
-4. Cek rekap hari itu, unduh Excel dan PDF.
+2. Scan kartu QR sekolah dengan webcam laptop dan HP di Chrome/Edge.
+3. Cabut kabel jaringan di tengah scan, lalu pasang lagi. Pastikan semua scan terkirim.
+4. Cek rekap hari itu di HP, coba saringan Alpa dan "Ubah status", unduh Excel dan PDF.
 
-## 11. Mulai dipakai harian — Belum
+## 10. Mulai dipakai harian — Belum
 
-Cetak kartu QR untuk semua siswa, isi tanggal libur semester ini, lalu mulai presensi pagi.
+Bagikan kartu QR ke semua siswa, isi tanggal libur semester ini, lalu mulai presensi pagi.

@@ -1,6 +1,6 @@
 # Spensada
 
-Aplikasi presensi pagi dengan QR code untuk SMP 1 Dawe, Kudus. Siswa menunjukkan kartu QR ke kamera, status Hadir atau Terlambat tercatat otomatis, dan admin mengunduh rekap harian dalam Excel atau PDF.
+Aplikasi presensi pagi dengan QR code untuk SMP 1 Dawe, Kudus. Siswa menunjukkan kartu QR ke kamera, status Hadir atau Terlambat langsung tampil dan dikirim ke server di latar belakang, dan admin mengunduh rekap harian dalam Excel atau PDF.
 
 Spesifikasi lengkap: [`docs/spesifikasi.md`](docs/spesifikasi.md). Tahapan proyek dan posisinya sekarang: [`docs/tahapan.md`](docs/tahapan.md).
 
@@ -8,15 +8,14 @@ Spesifikasi lengkap: [`docs/spesifikasi.md`](docs/spesifikasi.md). Tahapan proye
 
 - 1 akun admin.
 - Data siswa (NIS, nama, kelas): tambah, ubah, hapus, import Excel.
-- Cetak kartu QR siswa (PDF).
-- Scan QR lewat kamera laptop atau HP: sebelum 07.00 Hadir, 07.00–08.00 Terlambat, setelah 08.00 ditutup dan siswa yang belum scan menjadi Alpa.
+- Scan QR lewat kamera laptop atau HP: sebelum 07.00 Hadir, 07.00–08.00 Terlambat, setelah 08.00 ditutup dan siswa yang belum scan menjadi Alpa. Scan *local-first*: hasil langsung tampil tanpa menunggu database, lalu dikirim bertahap. Kartu QR (isi = NIS) dibuat sekolah di luar aplikasi.
 - Izin, Sakit, Dispensasi, dan status lain diisi manual oleh admin.
 - Tanggal libur (hari Minggu otomatis libur).
 - Rekap harian, unduh Excel dan PDF.
 
 ## Teknologi
 
-CodeIgniter 4.7 (PHP 8.3+), MySQL 8.4, Bootstrap 5.3, PhpSpreadsheet, mPDF, chillerlan/php-qrcode, jsQR. Zona waktu `Asia/Jakarta` (WIB).
+CodeIgniter 4.7 (PHP 8.3+), MySQL 8.4, Bootstrap 5.3, PhpSpreadsheet, mPDF, jsQR. Zona waktu `Asia/Jakarta` (WIB).
 
 ## Instalasi (Windows + Laragon)
 

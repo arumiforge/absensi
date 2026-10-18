@@ -10,7 +10,7 @@
 | Test method names and test descriptions | **English** | |
 | Files in `.claude/` and `CLAUDE.md` | **English** | |
 | Project specs in `docs/` | Indonesian | Existing language; keep it when editing docs. |
-| **UI text** (labels, buttons, menus, flash messages, validation errors, PDF, Excel, QR cards) | **Indonesian** | Friendly, non-technical. See below. |
+| **UI text** (labels, buttons, menus, flash messages, validation errors, PDF, Excel) | **Indonesian** | Friendly, non-technical. See below. |
 | **URL paths and query parameters** | **Indonesian** | Lowercase kebab-case paths, `snake_case` params. |
 
 ## Identifiers in code
@@ -26,7 +26,7 @@
 
 In short:
 
-- Address the admin as **"Anda"**. Login page, PDF, and QR cards: formal.
+- Address the admin as **"Anda"**. Login page and PDF: formal.
 - Short, active, friendly sentences. Buttons are verbs: "Simpan", "Kirim", "Batalkan".
 - Error messages say what happened and what to do next. Never blame the user. Never show codes, stack traces, SQL, or English jargon ("invalid", "error", "null", "submit", "request").
 - Use glossary words only (`glossary.md`), e.g. "Kelas" not "Rombel" on screen.

@@ -28,7 +28,6 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel', 'filter' => 'se
     $routes->post('siswa/(:num)/hapus', 'Siswa::hapus/$1', ['as' => 'siswa.hapus']);
     $routes->get('siswa/import', 'Siswa::import', ['as' => 'siswa.import']);
     $routes->post('siswa/import', 'Siswa::prosesImport', ['as' => 'siswa.import.proses']);
-    $routes->get('siswa/kartu', 'Siswa::kartu', ['as' => 'siswa.kartu']);
 
     $routes->get('libur', 'Libur::index', ['as' => 'libur']);
     $routes->post('libur', 'Libur::simpan', ['as' => 'libur.simpan']);

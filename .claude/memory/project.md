@@ -41,9 +41,9 @@ Head tags for every layout:
 | Users | Device focus |
 |---|---|
 | One admin (the only account) | Responsive: desktop and phone. |
-| Scan page (`/panel/scan`) | Laptop webcam or phone camera, Chrome/Edge, HTTPS, online. |
+| Scan page (`/panel/scan`) | Laptop webcam or phone camera, Chrome/Edge, HTTPS. Local-first: online to open the page, then scans keep working through short outages. |
 
-Students have no account; they only show their QR card.
+Students have no account; they only show their QR card (made by the school outside the app; QR = NIS).
 
 ## Stack
 
@@ -54,8 +54,8 @@ Students have no account; they only show their QR card.
 | Frontend | Server-rendered HTML + vanilla JS, **standard Bootstrap 5.3** (no custom CSS theme) |
 | Assets | Minified vendor files (`*.min.css`, `*.min.js`) served from `public/aset/vendor/<lib>/<version>/`. No CDN. |
 | Spreadsheet | `phpoffice/phpspreadsheet` (student import, recap XLSX) |
-| PDF | `mpdf/mpdf` (recap PDF, QR cards) |
-| QR | `chillerlan/php-qrcode` (cards), jsQR 1.4.0 in `public/aset/vendor/jsqr/` (camera) |
+| PDF | `mpdf/mpdf` (recap PDF) |
+| QR | jsQR 1.4.0 in `public/aset/vendor/jsqr/` (camera); no QR generator (D-12) |
 | Local dev | Windows + Laragon + Nginx + MySQL, `https://spensada.test` |
 | Production | Windows + Laragon + Nginx + MySQL, `https://spensada.web.id` (see `decisions.md` D-01) |
 | Time zone | `Asia/Jakarta` (WIB) everywhere |

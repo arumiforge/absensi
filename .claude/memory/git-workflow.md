@@ -34,7 +34,7 @@ Format (English, imperative, ≤ 72 chars, no trailing period):
 | `build` | Composer, vendor assets, Laragon/Nginx config |
 | `chore` | Anything else (gitignore, tooling) |
 
-Scope: an area (`scan`, `rekap`, `siswa`, `libur`, `kartu`, `login`, `memory`, `format`). Examples:
+Scope: an area (`scan`, `rekap`, `siswa`, `libur`, `login`, `memory`, `format`). Examples:
 
 ```text
 feat(rekap): add class filter to recap PDF
