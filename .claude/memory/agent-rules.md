@@ -44,7 +44,7 @@ Rules:
 - Comments and code identifiers not defined in docs: English.
 - UI text: friendly, non-technical Indonesian ("Anda" for staff, "kamu" for students).
 - URL slugs: Indonesian, from .claude/memory/glossary.md.
-- Dates, times, numbers, money: only via format_helper.php.
+- Dates, times, numbers: only via format_helper.php.
 - No new dependencies. No refactors or renames outside your files. No git commands.
 - If anything is ambiguous or conflicts with docs/, stop and report the question instead of guessing.
 

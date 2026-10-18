@@ -6,7 +6,7 @@ last 10 entries. Stage status lives in `docs/tahapan.md`; update it there too.
 
 ## Current state (2026-10-18)
 
-- The minimal QR attendance app (D-11) is on `main`, with local-first scan (D-12), scan sounds (D-13), and the reworked recap page. QR cards are made outside the app. Stages 1–6 of `docs/tahapan.md` are done in code; 64 PHPUnit tests pass (MySQL 8.0 sandbox), not yet run on Laragon.
+- The minimal QR attendance app (D-11) is on `main`, with local-first scan (D-12), scan sounds (D-13), and the reworked recap page. QR cards are made outside the app. Stages 1–6 of `docs/tahapan.md` are done in code; 63 PHPUnit tests (64 passed on MySQL 8.0 before the unused WA test was removed), not yet run on Laragon.
 - spensada.web.id still ran the old full app from `main` before the minimal app was merged, so `/login` returned 500. The server needs `main` pulled and a fresh database.
 - Docs: `docs/spesifikasi.md` (what the app does) and `docs/tahapan.md` (stages and status). Nothing else in `docs/`.
 
@@ -19,13 +19,13 @@ last 10 entries. Stage status lives in `docs/tahapan.md`; update it there too.
 
 ## Open questions for the owner
 
-- The landscape logo (`logo-landscape.*`, reads "PRIMA") and `ikon-512.png` are not used by any page. Keep or delete?
-- `format_wa()`, `format_rupiah()`, `format_percent()` in `format_helper.php` are unused. Keep or delete (with their tests)?
+- None.
 
 ## Log
 
 | Date | Branch | Work |
 |---|---|---|
+| 2026-10-18 | `claude/docs-overhaul-draft-1-wouicz` | Docs overhaul draft 2: owner approved deleting the unused landscape logo, `ikon-512.png`, and `format_wa()`/`format_rupiah()`/`format_percent()` with their tests. |
 | 2026-10-18 | `claude/docs-overhaul-draft-1-wouicz` | Docs overhaul draft 1: new stage map `docs/tahapan.md` checked against code; removed outdated decisions, phase rules, and notes from memory (D-14). |
 | 2026-10-18 | `fix/rekap-page` | Recap page rework: previous/next day, status filter chips with counts, search, shared "Ubah status" dialog, phone layout. 64 PHPUnit tests pass. |
 | 2026-10-18 | `main` | Scan page sounds (D-13). |

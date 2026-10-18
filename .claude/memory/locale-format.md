@@ -27,10 +27,6 @@ user-facing dates, times, or numbers. The helper is autoloaded
 Inputs: `DateTimeInterface`, Unix timestamp, or a string. Strings without an
 offset are read as WIB. Empty input returns `''`.
 
-The helper also still has `format_wa()`, `format_rupiah()`, and
-`format_percent()` from the old app. Nothing uses them; see the open
-question in `progress.md`.
-
 ## Fixed values
 
 - Time zone: **`Asia/Jakarta`** (WIB) for app, database session, and display. "WIB" label only in the recap PDF.
