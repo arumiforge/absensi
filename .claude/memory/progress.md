@@ -4,14 +4,16 @@ Update this file at the end of every task that changes the repo: keep
 "Current state", "Next" and "Open questions" current, and keep the log to the
 last 10 entries.
 
-## Current state (2026-10-17)
+## Current state (2026-10-18)
 
+- 2026-10-18: the minimal app is now on `main` (merged from `claude/fase-01-akun-akses-6jkkp8`, history kept). Before this, spensada.web.id ran the old full app from `main` against the minimal app's database setup, so `/login` and `/logo` returned 500. Old branches deleted; `main` is the only branch again.
 - Total overhaul (D-11) on branch `sky/gracious-gates-xd73xv`: the app is now 1 admin + students + morning QR scan + manual status + holidays + daily recap (Excel, PDF) + QR cards. Spec: `docs/spesifikasi.md`. 56 PHPUnit tests pass locally (MySQL 8.0 sandbox). Browser smoke test with a fake camera feed: scan, manual status, downloads all work.
 - Everything from the old phases (accounts per role, portal, school years, placements, attributes, photos, WA, activity log, system check, login lockout, kiosk plans) and `docs/00`–`docs/15` were removed.
 
 ## Next
 
-1. Owner: on the server, `copy env-example-production .env` and `php spark key:generate`, then create a fresh empty database `absensi` (old tables cannot be migrated), run `php spark migrate` and `php spark admin:password` on Laragon, run `composer test`, print one page of QR cards and test scanning with the school webcam/phone over HTTPS.
+1. Owner: set `main` as the GitHub default branch if it is not yet. On the server: `git checkout main`, `git pull`, `composer install --no-dev`.
+2. Owner: on the server, `copy env-example-production .env` and `php spark key:generate`, then create a fresh empty database `absensi` (old tables cannot be migrated), run `php spark migrate` and `php spark admin:password` on Laragon, run `composer test`, print one page of QR cards and test scanning with the school webcam/phone over HTTPS.
 
 ## Open questions for the owner
 
@@ -22,6 +24,7 @@ last 10 entries.
 
 | Date | Branch | Work |
 |---|---|---|
+| 2026-10-18 | `main` | Found why spensada.web.id showed 500 (server ran old `main`, minimal app only on `claude/fase-01-akun-akses-6jkkp8`). Merged the minimal app into `main` keeping history; deleted merged branches. |
 | 2026-10-17 | `sky/gracious-gates-xd73xv` | Added `env-example-production` for https://spensada.web.id (database `absensi`, root without password; key generated on the server). |
 | 2026-10-17 | `sky/gracious-gates-xd73xv` | Total overhaul to the minimal QR attendance app (D-11). New schema (`admin`, `siswa`, `presensi`, `libur`), Presensi service, scan page with jsQR, recap Excel/PDF, QR cards, student import, holidays, password change, `admin:password` command. Removed old features, docs, and tests. |
 | 2026-10-10 | `claude/fase-01-akun-akses-6jkkp8` | FASE-02 L02-01 to L02-09 (now removed by D-11). |
