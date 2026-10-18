@@ -49,7 +49,7 @@ Rules:
 - If anything is ambiguous or conflicts with docs/, stop and report the question instead of guessing.
 
 Done when:
-- <acceptance criteria / AC IDs>
+- <acceptance criteria from docs/spesifikasi.md>
 - Tests pass: <command>
 
 Report back: files changed, tests run with results, open questions.
