@@ -1,13 +1,19 @@
 #--------------------------------------------------------------------
 # Spensada — production environment for https://spensada.web.id
 #
-# Copy this file to `.env` in the project root on the server:
-#   copy env-example-production .env
-# then run `php spark migrate` and `php spark admin:password`.
+# Ready to copy: nothing in this file needs editing on a Laragon server
+# (MySQL user root without a password, database `absensi`).
 #
-# The repository is public, so the encryption key is left empty here.
-# After copying, run `php spark key:generate` once on the server; it
-# writes a new key into `.env`.
+# Setup in the Laragon terminal, in the project folder:
+#   copy env-example-production .env
+#   php spark key:generate
+#   php spark migrate
+#   php spark data:contoh            (optional: 200 sample students to try the app)
+#   php spark admin:password         (skip if data:contoh already made the admin)
+#
+# The repository is public, so the encryption key is left empty here;
+# `php spark key:generate` writes a new one into `.env`.
+# Before real use: php spark data:contoh --kosongkan
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -23,6 +29,10 @@ CI_ENVIRONMENT = production
 # HTTPS only: the camera and the login cookies need it.
 app.baseURL = 'https://spensada.web.id/'
 app.forceGlobalSecureRequests = true
+
+# The app sends its own Content-Security-Policy (App\Filters\Keamanan).
+# true would add a second, stricter policy that blocks Bootstrap's icons.
+app.CSPEnabled = false
 
 #--------------------------------------------------------------------
 # DATABASE
