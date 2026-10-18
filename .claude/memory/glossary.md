@@ -29,7 +29,7 @@ disagree, the spec wins — fix this file. Need a new word? Ask the owner.
 
 ## Buttons
 
-Tambah · Ubah · Simpan · Hapus · Batal · Cari · Import · Unduh Excel · Unduh PDF · Kirim sekarang · Login · Logout.
+Tambah · Ubah · Simpan · Hapus · Batal · Cari · Import · Unduh Excel · Unduh PDF · Kirim sekarang · Suara: nyala / Suara: mati / Nyalakan suara · Login · Logout.
 
 ## URL rules
 

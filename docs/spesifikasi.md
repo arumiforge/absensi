@@ -36,11 +36,26 @@ Semua jam dalam WIB (`Asia/Jakarta`).
 Scan tidak menunggu server atau database, agar antrean siswa cepat.
 
 - Saat halaman scan dibuka, browser memuat jam server, aturan hari ini (libur, jam masuk, jam tutup), daftar siswa, dan catatan presensi hari ini.
-- Setiap scan langsung diperiksa di perangkat dengan aturan §2, hasilnya langsung tampil, dan scan yang diterima disimpan di browser (`localStorage`). Jam scan memakai jam perangkat yang sudah disamakan dengan jam server.
+- Setiap scan langsung diperiksa di perangkat dengan aturan §2, hasilnya langsung tampil dengan bunyi (§2.2), dan scan yang diterima disimpan di browser (`localStorage`). Jam scan memakai jam perangkat yang sudah disamakan dengan jam server.
 - Scan yang tersimpan dikirim ke server di latar belakang: paling banyak 100 scan per kiriman, setiap 5 detik selama ada scan yang belum terkirim. Admin juga bisa menekan "Kirim sekarang".
 - Server memeriksa ulang setiap scan dengan jam scan dari perangkat, bukan jam kiriman tiba. Jam scan yang lebih dari 5 menit di depan jam server ditolak. Kiriman ulang tidak menggandakan catatan.
 - Bila koneksi putus, halaman ditutup, atau sesi login berakhir, scan yang belum terkirim tetap tersimpan di browser itu dan dikirim saat halaman scan dibuka lagi. Halaman memperingatkan bila ditutup sebelum semua scan terkirim.
 - Halaman scan yang dibuka sebelum hari ini harus dimuat ulang. Siswa atau libur yang ditambahkan setelah halaman dibuka baru dikenali setelah halaman dimuat ulang.
+
+### 2.2 Bunyi di halaman scan
+
+Bunyi dibuat di browser (Web Audio API), tanpa file suara.
+
+| Kejadian | Bunyi |
+|---|---|
+| Tercatat Hadir | 2 nada naik |
+| Tercatat Terlambat | 2 nada datar |
+| Sudah tercatat sebelumnya | 1 nada pendek |
+| Kode QR tidak dikenal, presensi sudah ditutup, atau hari libur | Dengung rendah |
+| Scan ditolak server, kiriman mulai gagal (koneksi putus atau sesi berakhir), atau halaman dibuka kemarin | 2 nada turun, sekali saja selama kiriman masih gagal |
+
+- Tombol "Suara" menyalakan atau mematikan bunyi. Pilihan disimpan di browser itu.
+- Browser baru mengizinkan bunyi setelah halaman disentuh atau diklik. Bila bunyi belum aktif, tombol bertuliskan "Nyalakan suara"; sentuh tombol itu sekali setelah membuka halaman scan.
 
 ## 3. Data
 

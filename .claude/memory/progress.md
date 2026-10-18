@@ -19,6 +19,7 @@ last 10 entries.
 
 ## Open questions for the owner
 
+- D-13: are the chosen scan sounds (events and tones) right, or should any event be silent or different?
 - D-07: the landscape logo says "PRIMA" — it is no longer used by any page; keep or delete the file?
 - OQ-20: production server location and HTTPS certificate (the camera needs HTTPS).
 
@@ -26,6 +27,7 @@ last 10 entries.
 
 | Date | Branch | Work |
 |---|---|---|
+| 2026-10-18 | `main` | Scan page sounds (D-13): Web Audio tones per result, one warning when sending starts failing, "Suara" toggle. Browser check with recorded tones passes. |
 | 2026-10-18 | `main` | Removed QR card printing (route, view, chillerlan/php-qrcode). Local-first scan: `Presensi::dataScan()` + `scanBanyak()`, JSON batch `POST /panel/scan`, `scan.js` with localStorage queue, server-clock offset, retry and "Kirim sekarang". Spec §2.1 added. |
 | 2026-10-18 | `main` | Found why spensada.web.id showed 500 (server ran old `main`, minimal app only on `claude/fase-01-akun-akses-6jkkp8`). Merged the minimal app into `main` keeping history. Branch deletion was refused in the session; owner deletes them on GitHub. |
 | 2026-10-17 | `sky/gracious-gates-xd73xv` | Added `env-example-production` for https://spensada.web.id (database `absensi`, root without password; key generated on the server). |
