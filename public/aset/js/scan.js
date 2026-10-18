@@ -38,7 +38,12 @@
       return [];
     }
   };
-  const simpan = () => {
+  // Other tabs on this device share the same queue, so scans they added are
+  // merged in before every write instead of being overwritten. A scan sent
+  // twice this way is harmless: the server keeps the first record.
+  const simpan = (terkirim = new Set()) => {
+    const ada = new Set(antrean.map((s) => s.id));
+    antrean = [...antrean, ...baca().filter((s) => !ada.has(s.id))].filter((s) => !terkirim.has(s.id));
     try {
       localStorage.setItem(KUNCI, JSON.stringify(antrean));
     } catch {
@@ -190,7 +195,8 @@
         body: JSON.stringify({ scan: batch }),
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', [headerToken]: token },
       });
-      const json = await res.json();
+      // An HTML error page instead of JSON means the server failed, not the network.
+      const json = await res.json().catch(() => ({}));
       if (json.csrf) {
         // The page was open too long; the next round uses the new token.
         headerToken = json.csrf.header;
@@ -198,15 +204,21 @@
         gagal = 'csrf';
       } else if (res.status === 401) {
         gagal = 'login';
-      } else if (!res.ok) {
+      } else if (!res.ok || !Array.isArray(json.hasil)) {
         gagal = 'server';
       } else {
         // The server read its clock about halfway between sending and receiving.
         selisih = json.jam - Math.round((t1 + Date.now()) / 2);
         const selesai = new Set(json.hasil.map((h) => h.id));
-        antrean = antrean.filter((s) => !selesai.has(s.id));
-        simpan();
+        simpan(selesai);
         const galat = json.hasil.filter((h) => h.hasil === 'galat');
+        for (const item of galat) {
+          // Not recorded on the server, so the student may scan again.
+          const scan = batch.find((s) => s.id === item.id);
+          if (scan) {
+            tercatat.delete(kunci(scan.nis));
+          }
+        }
         if (galat.length > 0) {
           tampilDitolak(galat, batch);
           bunyi('peringatan');
@@ -334,6 +346,10 @@
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
     .then((stream) => {
       video.srcObject = stream;
+      // A webcam unplugged or taken by another app stops the stream silently.
+      for (const track of stream.getVideoTracks()) {
+        track.addEventListener('ended', () => tampil('danger', 'Kamera berhenti.', 'Periksa kamera, lalu muat ulang halaman.'));
+      }
       video.play();
       pindai();
     })
