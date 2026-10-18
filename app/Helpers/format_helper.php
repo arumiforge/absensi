@@ -3,8 +3,8 @@
 /**
  * Indonesian locale formatting for everything shown to users.
  *
- * Every view, export, PDF, and message MUST format dates, times, numbers,
- * and money through these functions. Do not call date(), number_format(),
+ * Every view, export, PDF, and message MUST format dates, times, and
+ * numbers through these functions. Do not call date(), number_format(),
  * or IntlDateFormatter directly for user-facing output.
  *
  * Formats follow .claude/memory/locale-format.md.
@@ -128,64 +128,12 @@ if (! function_exists('format_number')) {
     }
 }
 
-if (! function_exists('format_wa')) {
-    /**
-     * Shows a stored WA number (62…) with a leading 0 and hyphens after the
-     * 4th and 8th digit: 6281234567890 → 0812-3456-7890.
-     */
-    function format_wa(?string $value): string
-    {
-        if ($value === null || $value === '') {
-            return '';
-        }
-
-        $lokal = str_starts_with($value, '62') ? '0' . substr($value, 2) : $value;
-
-        return implode('-', array_filter([substr($lokal, 0, 4), substr($lokal, 4, 4), substr($lokal, 8)], static fn (string $part): bool => $part !== ''));
-    }
-}
-
-if (! function_exists('format_rupiah')) {
-    /**
-     * Formats money as "Rp 1.250.000". Negative amounts become "-Rp 1.250.000".
-     */
-    function format_rupiah(float|int|string|null $value, int $decimals = 0): string
-    {
-        if ($value === null || $value === '') {
-            return '';
-        }
-
-        $amount = format_pre_round($value);
-        $digits = number_format(abs($amount), $decimals, ',', '.');
-        // A negative amount that rounds to zero shows as "Rp 0", not "-Rp 0".
-        $sign = ($amount < 0 && preg_match('/[1-9]/', $digits)) ? '-' : '';
-
-        return $sign . 'Rp ' . $digits;
-    }
-}
-
-if (! function_exists('format_percent')) {
-    /**
-     * Formats a percentage as a whole number without a space: "88%".
-     *
-     * Exact halves round up (87,5 becomes 88).
-     */
-    function format_percent(float|int|string|null $value): string
-    {
-        if ($value === null || $value === '') {
-            return '';
-        }
-
-        return format_number(round(format_pre_round($value), 0, PHP_ROUND_HALF_UP)) . '%';
-    }
-}
-
 if (! function_exists('format_pre_round')) {
     /**
      * Rounds to 15 significant digits first, so float noise does not decide
-     * a half: 23 / 40 * 100 is 57.49999999999999 and must show as 58%.
+     * a half: 23 / 40 * 100 is 57.49999999999999 and must round as 57.5.
      * Done explicitly so the result does not depend on the PHP version's
-     * round(), and matches public/aset/js/format.js (toPrecision(15)).
+     * round().
      */
     function format_pre_round(float|int|string $value): float
     {

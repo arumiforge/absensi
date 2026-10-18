@@ -31,7 +31,7 @@ final class FormatHelperTest extends CIUnitTestCase
     {
         $this->assertSame('', format_date(null));
         $this->assertSame('', format_time(''));
-        $this->assertSame('', format_rupiah(null));
+        $this->assertSame('', format_number(null));
     }
 
     public function testUnknownDateStyleThrows(): void
@@ -51,21 +51,9 @@ final class FormatHelperTest extends CIUnitTestCase
         $this->assertSame('13 Okt 2026, 07.32', format_datetime($utc));
     }
 
-    public function testNumbersMoneyAndPercent(): void
+    public function testNumbersUseIndonesianSeparators(): void
     {
         $this->assertSame('1.024', format_number(1024));
         $this->assertSame('12,5', format_number(12.5, 1));
-        $this->assertSame('Rp 1.250.000', format_rupiah(1250000));
-        $this->assertSame('-Rp 1.250.000', format_rupiah(-1250000));
-        $this->assertSame('88%', format_percent(87.5));
-        $this->assertSame('87%', format_percent(87.4));
-    }
-
-    public function testWaNumberShowsLocalPrefixWithHyphens(): void
-    {
-        $this->assertSame('0812-3456-7890', format_wa('6281234567890'));
-        $this->assertSame('0812-3456-78', format_wa('62812345678'));
-        $this->assertSame('0812-3456-789012', format_wa('628123456789012'));
-        $this->assertSame('', format_wa(null));
     }
 }

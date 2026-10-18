@@ -21,9 +21,7 @@ All in `public/aset/logo/` unless noted. Do not edit, recolor, or crop them.
 | File | Use |
 |---|---|
 | `logo-sekolah.png` | School emblem (618×604, transparent). Login page and panel navbar. |
-| `logo-landscape.webp`, `logo-landscape.png` | Landscape logo reading "PRIMA SMP 1 DAWE KUDUS". Not used by any page (open question in `progress.md`). |
 | `ikon-192.png` | Square icon from the emblem. Error pages. |
-| `ikon-512.png` | Square icon from the emblem. Not used by any page. |
 | `favicon-32.png` | PNG favicon. |
 | `public/favicon.ico` | Favicon (16, 32, 48 px). |
 | `public/apple-touch-icon.png` | iOS home-screen icon (180 px, white background). |
