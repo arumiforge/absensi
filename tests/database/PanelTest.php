@@ -55,15 +55,33 @@ final class PanelTest extends CIUnitTestCase
         $this->kirim('GET', 'panel/rekap', [], [])->assertRedirectTo('https://example.com/login');
     }
 
-    public function testScanRecordsAttendance(): void
+    public function testScanPageCarriesLocalData(): void
     {
-        $this->kirim('GET', 'panel/scan')->assertSee('jsQR.min.js');
+        $page = $this->kirim('GET', 'panel/scan');
 
-        $result = $this->kirim('POST', 'panel/scan', ['nis' => '0012']);
+        $page->assertSee('jsQR.min.js');
+        preg_match('#<script type="application/json" id="data-scan">(.*?)</script>#s', (string) $page->response()->getBody(), $m);
+        $data = json_decode($m[1], true);
+        $this->assertSame('2026-10-13', $data['tanggal']);
+        $this->assertSame(['Budi', '7A'], $data['siswa']['0012']);
+    }
+
+    public function testScanBatchRecordsAttendance(): void
+    {
+        $result = $this->kirimJson('panel/scan', ['scan' => [['id' => 'x1', 'nis' => '0012', 'waktu' => '2026-10-13 06:35:00']]]);
 
         $result->assertOK();
-        $this->assertSame('tercatat', json_decode($result->getJSON(), true)['hasil']);
-        $this->seeInDatabase('presensi', ['tanggal' => '2026-10-13', 'status' => 'hadir']);
+        $json = json_decode($result->getJSON(), true);
+        $this->assertSame([['id' => 'x1', 'hasil' => 'tercatat']], array_map(static fn (array $h): array => ['id' => $h['id'], 'hasil' => $h['hasil']], $json['hasil']));
+        $this->assertIsInt($json['jam']);
+        $this->seeInDatabase('presensi', ['tanggal' => '2026-10-13', 'status' => 'hadir', 'jam_scan' => '06:35:00']);
+    }
+
+    public function testScanBatchRejectsBadBody(): void
+    {
+        $this->kirimJson('panel/scan', ['scan' => [['id' => 'x1', 'nis' => '0012']]])->assertStatus(400);
+        $this->kirimJson('panel/scan', ['scan' => array_fill(0, 101, ['id' => 'x', 'nis' => '0012', 'waktu' => '2026-10-13 06:35:00'])])->assertStatus(400);
+        $this->seeNumRecords(0, 'presensi', []);
     }
 
     public function testRekapPageAndManualStatus(): void
@@ -129,6 +147,20 @@ final class PanelTest extends CIUnitTestCase
         $this->assertSame('Password sudah diganti.', session('sukses'));
 
         $this->kirim('GET', 'panel/rekap')->assertRedirectTo('https://example.com/login');
+    }
+
+    /**
+     * A background JSON request from the scan page, as the admin.
+     */
+    private function kirimJson(string $uri, array $body): TestResponse
+    {
+        Services::resetSingle('router');
+        Services::resetSingle('response');
+
+        return $this->withSession($this->sesi)
+            ->withHeaders(['X-CSRF-TOKEN' => service('security')->getHash(), 'X-Requested-With' => 'XMLHttpRequest', 'Content-Type' => 'application/json'])
+            ->withBody(json_encode($body))
+            ->call('POST', $uri);
     }
 
     /**

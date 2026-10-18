@@ -9,7 +9,7 @@ class Spensada extends BaseConfig
     /**
      * App version, appended to asset URLs as `?v=`.
      */
-    public string $versi = '1.0.0';
+    public string $versi = '1.1.0';
 
     /**
      * Shown on the login page and recaps.

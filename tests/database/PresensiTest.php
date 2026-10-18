@@ -94,6 +94,79 @@ final class PresensiTest extends CIUnitTestCase
         $this->seeNumRecords(0, 'presensi', []);
     }
 
+    public function testBatchUsesDeviceTimeNotArrivalTime(): void
+    {
+        // Scanned offline before 07:00, sent at 07:20.
+        Time::setTestNow(self::HARI . ' 07:20:00', 'Asia/Jakarta');
+        $hasil = (new Presensi())->scanBanyak([
+            ['id' => 'a', 'nis' => '0012', 'waktu' => self::HARI . ' 06:55:30'],
+            ['id' => 'b', 'nis' => '0012', 'waktu' => self::HARI . ' 07:05:00'],
+            ['id' => 'c', 'nis' => '9999', 'waktu' => self::HARI . ' 06:56:00'],
+        ]);
+
+        $this->assertSame(['a', 'b', 'c'], array_column($hasil, 'id'));
+        $this->assertSame(['tercatat', 'sudah', 'galat'], array_column($hasil, 'hasil'));
+        $this->seeInDatabase('presensi', ['siswa_id' => $this->budi, 'tanggal' => self::HARI, 'status' => 'hadir', 'jam_scan' => '06:55:30']);
+        $this->seeNumRecords(1, 'presensi', []);
+    }
+
+    public function testBatchSentAgainKeepsOneRecord(): void
+    {
+        Time::setTestNow(self::HARI . ' 07:20:00', 'Asia/Jakarta');
+        $scan = [['id' => 'a', 'nis' => '0012', 'waktu' => self::HARI . ' 07:10:00']];
+
+        (new Presensi())->scanBanyak($scan);
+        $this->assertSame('sudah', (new Presensi())->scanBanyak($scan)[0]['hasil']);
+        $this->seeNumRecords(1, 'presensi', []);
+    }
+
+    public function testBatchRejectsFutureOrUnreadableTime(): void
+    {
+        Time::setTestNow(self::HARI . ' 06:30:00', 'Asia/Jakarta');
+        $hasil = (new Presensi())->scanBanyak([
+            ['id' => 'a', 'nis' => '0012', 'waktu' => self::HARI . ' 06:40:00'],
+            ['id' => 'b', 'nis' => '0012', 'waktu' => '2026-02-30 06:20:00'],
+            ['id' => 'c', 'nis' => '0012', 'waktu' => 'kemarin'],
+        ]);
+
+        $this->assertStringContainsString('Jam di perangkat scan tidak cocok', $hasil[0]['pesan']);
+        $this->assertStringContainsString('Waktu scan tidak terbaca', $hasil[1]['pesan']);
+        $this->assertStringContainsString('Waktu scan tidak terbaca', $hasil[2]['pesan']);
+        $this->seeNumRecords(0, 'presensi', []);
+
+        // A device clock a little ahead of the server is fine.
+        $this->assertSame('tercatat', (new Presensi())->scanBanyak([['id' => 'd', 'nis' => '0012', 'waktu' => self::HARI . ' 06:34:00']])[0]['hasil']);
+    }
+
+    public function testBatchFromEarlierDayFollowsThatDay(): void
+    {
+        $this->db->table('libur')->insert(['tanggal' => '2026-10-12', 'keterangan' => 'Rapat guru']);
+        Time::setTestNow(self::HARI . ' 06:30:00', 'Asia/Jakarta');
+        $hasil = (new Presensi())->scanBanyak([
+            ['id' => 'a', 'nis' => '0012', 'waktu' => '2026-10-12 06:50:00'],
+            ['id' => 'b', 'nis' => '0012', 'waktu' => '2026-10-10 07:15:00'],
+        ]);
+
+        $this->assertStringContainsString('Rapat guru', $hasil[0]['pesan']);
+        $this->assertSame('terlambat', $hasil[1]['status']);
+        $this->seeInDatabase('presensi', ['tanggal' => '2026-10-10', 'status' => 'terlambat', 'jam_scan' => '07:15:00']);
+    }
+
+    public function testDataScanHasTodayRulesStudentsAndRecords(): void
+    {
+        $this->scanPada('06:45:10');
+        Time::setTestNow(self::HARI . ' 06:50:00.250', 'Asia/Jakarta');
+
+        $data = (new Presensi())->dataScan();
+
+        $this->assertSame(Time::parse(self::HARI . ' 06:50:00', 'Asia/Jakarta')->getTimestamp() * 1000 + 250, $data['jam']);
+        $this->assertSame(self::HARI, $data['tanggal']);
+        $this->assertNull($data['libur']);
+        $this->assertSame('08.00', $data['labelTutup']);
+        $this->assertSame(['0012' => ['Budi', '7A']], $data['siswa']);
+        $this->assertSame(['0012' => ['hadir', '06.45']], $data['tercatat']);
+    }
+
     public function testRekapMarksAlpaOnlyAfterEight(): void
     {
         Time::setTestNow(self::HARI . ' 07:59:00', 'Asia/Jakarta');
