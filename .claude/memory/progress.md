@@ -25,6 +25,7 @@ last 10 entries. Stage status lives in `docs/tahapan.md`; update it there too.
 
 | Date | Branch | Work |
 |---|---|---|
+| 2026-10-18 | `claude/perbaikan-scan-kios-1tdsxm` | Scan page fixes (shared queue across tabs, re-scan after a server rejection, server errors not shown as lost connection, camera-stopped message) and D-15: full screen, wake lock, camera picker. App version 1.4.0. |
 | 2026-10-18 | `claude/docs-overhaul-draft-1-wouicz` | Docs overhaul draft 2: owner approved deleting the unused landscape logo, `ikon-512.png`, and `format_wa()`/`format_rupiah()`/`format_percent()` with their tests. |
 | 2026-10-18 | `claude/docs-overhaul-draft-1-wouicz` | Docs overhaul draft 1: new stage map `docs/tahapan.md` checked against code; removed outdated decisions, phase rules, and notes from memory (D-14). |
 | 2026-10-18 | `fix/rekap-page` | Recap page rework: previous/next day, status filter chips with counts, search, shared "Ubah status" dialog, phone layout. 64 PHPUnit tests pass. |

@@ -4,6 +4,7 @@
 (() => {
   const KUNCI = 'spensada.antrean-scan';
   const KUNCI_SUARA = 'spensada.suara';
+  const KUNCI_KAMERA = 'spensada.kamera';
   const BATCH = 100;
   const JEDA_KIRIM = 5000;
   const WIB = 7 * 3600 * 1000;
@@ -16,6 +17,10 @@
   const tombolKirim = document.getElementById('kirim-sekarang');
   const kotakDitolak = document.getElementById('ditolak');
   const tombolSuara = document.getElementById('suara');
+  const pilihKamera = document.getElementById('pilih-kamera');
+  const tombolLayar = document.getElementById('layar-penuh');
+  const kios = document.getElementById('kios');
+  const petunjuk = document.getElementById('petunjuk');
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   const WARNA = { hadir: 'success', terlambat: 'warning' };
@@ -38,7 +43,12 @@
       return [];
     }
   };
-  const simpan = () => {
+  // Other tabs on this device share the same queue, so scans they added are
+  // merged in before every write instead of being overwritten. A scan sent
+  // twice this way is harmless: the server keeps the first record.
+  const simpan = (terkirim = new Set()) => {
+    const ada = new Set(antrean.map((s) => s.id));
+    antrean = [...antrean, ...baca().filter((s) => !ada.has(s.id))].filter((s) => !terkirim.has(s.id));
     try {
       localStorage.setItem(KUNCI, JSON.stringify(antrean));
     } catch {
@@ -126,14 +136,26 @@
     }
   }
 
+  // Full screen (kiosk view): larger text so students can read it from a distance.
+  const layarPenuh = () => document.fullscreenElement === kios;
+  let warnaHasil = 'secondary';
+  const ukuranHasil = () => {
+    hasil.className = `alert alert-${warnaHasil} ${layarPenuh() ? 'display-6' : 'fs-5'}`;
+    for (const detail of hasil.querySelectorAll('.detail')) {
+      detail.className = `detail mt-1 ${layarPenuh() ? 'fs-3' : 'fs-6'}`;
+    }
+  };
+
+  // The last result stays on screen until the next scan.
   const tampil = (warna, judul, detail = '') => {
     const strong = document.createElement('strong');
     strong.textContent = judul;
     const small = document.createElement('div');
-    small.className = 'fs-6 mt-1';
+    small.className = 'detail';
     small.textContent = detail;
-    hasil.className = `alert alert-${warna} fs-5`;
     hasil.replaceChildren(strong, small);
+    warnaHasil = warna;
+    ukuranHasil();
   };
 
   const perbaruiInfo = () => {
@@ -190,7 +212,8 @@
         body: JSON.stringify({ scan: batch }),
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', [headerToken]: token },
       });
-      const json = await res.json();
+      // An HTML error page instead of JSON means the server failed, not the network.
+      const json = await res.json().catch(() => ({}));
       if (json.csrf) {
         // The page was open too long; the next round uses the new token.
         headerToken = json.csrf.header;
@@ -198,15 +221,21 @@
         gagal = 'csrf';
       } else if (res.status === 401) {
         gagal = 'login';
-      } else if (!res.ok) {
+      } else if (!res.ok || !Array.isArray(json.hasil)) {
         gagal = 'server';
       } else {
         // The server read its clock about halfway between sending and receiving.
         selisih = json.jam - Math.round((t1 + Date.now()) / 2);
         const selesai = new Set(json.hasil.map((h) => h.id));
-        antrean = antrean.filter((s) => !selesai.has(s.id));
-        simpan();
+        simpan(selesai);
         const galat = json.hasil.filter((h) => h.hasil === 'galat');
+        for (const item of galat) {
+          // Not recorded on the server, so the student may scan again.
+          const scan = batch.find((s) => s.id === item.id);
+          if (scan) {
+            tercatat.delete(kunci(scan.nis));
+          }
+        }
         if (galat.length > 0) {
           tampilDitolak(galat, batch);
           bunyi('peringatan');
@@ -327,15 +356,98 @@
   perbaruiInfo();
   kirimAntrean();
 
+  if (document.fullscreenEnabled) {
+    tombolLayar.hidden = false;
+  }
+  tombolLayar.addEventListener('click', () => {
+    (layarPenuh() ? document.exitFullscreen() : kios.requestFullscreen()).catch(() => {});
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const penuh = layarPenuh();
+    tombolLayar.textContent = penuh ? 'Keluar layar penuh' : 'Layar penuh';
+    kios.classList.toggle('p-4', penuh);
+    kios.classList.toggle('overflow-auto', penuh);
+    petunjuk.hidden = penuh;
+    video.style.maxHeight = penuh ? '80vh' : '';
+    ukuranHasil();
+  });
+
+  // Keeps the screen on while the page is open, so the camera does not stop.
+  // The browser drops the lock when the tab is hidden; it is asked for again.
+  let kunciLayar = null;
+  const jagaLayar = async () => {
+    if (!navigator.wakeLock || document.visibilityState !== 'visible' || (kunciLayar && !kunciLayar.released)) {
+      return;
+    }
+    try {
+      kunciLayar = await navigator.wakeLock.request('screen');
+    } catch {
+      // Not allowed now (battery saver, for example): the screen may sleep.
+    }
+  };
+  document.addEventListener('visibilitychange', jagaLayar);
+
   if (!navigator.mediaDevices) {
     tampil('danger', 'Kamera tidak dapat dibuka.', 'Buka halaman ini lewat alamat https di Chrome atau Edge.');
     return;
   }
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
-    .then((stream) => {
-      video.srcObject = stream;
-      video.play();
+
+  let stream = null;
+  let memindai = false;
+
+  // Camera names are only known after access is allowed, so the list is filled after opening one.
+  const isiDaftarKamera = async () => {
+    const kamera = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput');
+    const aktif = stream ? stream.getVideoTracks()[0]?.getSettings().deviceId : '';
+    pilihKamera.replaceChildren(...kamera.map((d, i) => new Option(d.label || `Kamera ${i + 1}`, d.deviceId, false, d.deviceId === aktif)));
+    pilihKamera.hidden = kamera.length < 2;
+  };
+
+  const bukaKamera = async (id) => {
+    if (stream) {
+      for (const track of stream.getTracks()) {
+        track.stop();
+      }
+    }
+    const bawaan = { video: { facingMode: 'environment' }, audio: false };
+    try {
+      stream = await navigator.mediaDevices.getUserMedia(id ? { video: { deviceId: { exact: id } }, audio: false } : bawaan);
+    } catch (e) {
+      if (!id) {
+        throw e;
+      }
+      // The chosen camera is gone: use the default one.
+      stream = await navigator.mediaDevices.getUserMedia(bawaan);
+    }
+    // A webcam unplugged or taken by another app stops the stream silently.
+    for (const track of stream.getVideoTracks()) {
+      track.addEventListener('ended', () => tampil('danger', 'Kamera berhenti.', 'Periksa kamera, lalu muat ulang halaman.'));
+    }
+    video.srcObject = stream;
+    video.play().catch(() => {});
+    if (!memindai) {
+      memindai = true;
       pindai();
-    })
-    .catch(() => tampil('danger', 'Kamera tidak dapat dibuka.', 'Izinkan akses kamera di browser, lalu muat ulang halaman.'));
+    }
+    jagaLayar();
+    isiDaftarKamera().catch(() => {});
+  };
+
+  const gagalKamera = () => tampil('danger', 'Kamera tidak dapat dibuka.', 'Izinkan akses kamera di browser, lalu muat ulang halaman.');
+  pilihKamera.addEventListener('change', () => {
+    try {
+      localStorage.setItem(KUNCI_KAMERA, pilihKamera.value);
+    } catch {
+      // Storage blocked: the choice lasts until the page is closed.
+    }
+    bukaKamera(pilihKamera.value).catch(gagalKamera);
+  });
+
+  let kameraTersimpan = '';
+  try {
+    kameraTersimpan = localStorage.getItem(KUNCI_KAMERA) || '';
+  } catch {
+    // Storage blocked: the default camera is used.
+  }
+  bukaKamera(kameraTersimpan).catch(gagalKamera);
 })();

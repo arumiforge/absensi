@@ -43,7 +43,7 @@ Bukti: `app/Controllers/Panel/Siswa.php`, `app/Services/ImportSiswa.php`, `app/M
 
 ## 4. Scan QR *local-first* — Selesai di kode, belum diuji di sekolah
 
-Halaman kamera dengan jsQR 1.4.0. Sebelum 07.00 Hadir, 07.00–07.59 Terlambat, mulai 08.00 ditolak. Hari Minggu dan tanggal libur ditolak. Scan ulang tidak mengubah catatan pertama. Scan diperiksa di perangkat, disimpan di browser, lalu dikirim ke server paling banyak 100 scan setiap 5 detik; server memeriksa ulang dengan jam scan dari perangkat. Bunyi berbeda untuk setiap hasil, dengan tombol "Suara".
+Halaman kamera dengan jsQR 1.4.0. Sebelum 07.00 Hadir, 07.00–07.59 Terlambat, mulai 08.00 ditolak. Hari Minggu dan tanggal libur ditolak. Scan ulang tidak mengubah catatan pertama. Scan diperiksa di perangkat, disimpan di browser, lalu dikirim ke server paling banyak 100 scan setiap 5 detik; server memeriksa ulang dengan jam scan dari perangkat. Bunyi berbeda untuk setiap hasil, dengan tombol "Suara". Tampilan layar penuh, layar dijaga tetap menyala, dan pilihan kamera (§2.3 spesifikasi).
 
 Bukti: `app/Controllers/Panel/Scan.php`, `app/Services/Presensi.php` (`dataScan()`, `scanBanyak()`, `scan()`, `statusScan()`), `app/Views/panel/scan.php`, `public/aset/js/scan.js`, `public/aset/vendor/jsqr/`.
 
