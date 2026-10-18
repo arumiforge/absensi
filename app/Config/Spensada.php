@@ -12,7 +12,7 @@ class Spensada extends BaseConfig
     public string $versi = '1.0.0';
 
     /**
-     * Shown on the login page, recaps, and QR cards.
+     * Shown on the login page and recaps.
      */
     public string $namaSekolah = 'SMP 1 Dawe';
 }

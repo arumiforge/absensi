@@ -92,11 +92,6 @@ final class PanelTest extends CIUnitTestCase
         $this->assertStringStartsWith('%PDF', $pdf->response()->getBody());
     }
 
-    public function testQrCardsPdf(): void
-    {
-        $this->assertStringStartsWith('%PDF', $this->kirim('GET', 'panel/siswa/kartu?kelas=7A')->response()->getBody());
-    }
-
     public function testStudentCrud(): void
     {
         $this->kirim('POST', 'panel/siswa', ['nis' => '0012', 'nama' => 'Ani', 'kelas' => '7B']);

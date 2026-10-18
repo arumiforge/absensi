@@ -5,7 +5,6 @@
     <div class="d-flex flex-wrap gap-2">
         <a class="btn btn-primary" href="<?= url_to('siswa.tambah') ?>">Tambah siswa</a>
         <a class="btn btn-outline-primary" href="<?= url_to('siswa.import') ?>">Import Excel</a>
-        <a class="btn btn-outline-secondary" href="<?= url_to('siswa.kartu') . ($kelas === '' ? '' : '?' . esc(http_build_query(['kelas' => $kelas]))) ?>">Cetak kartu QR<?= $kelas === '' ? '' : ' kelas ' . esc($kelas) ?></a>
     </div>
 </div>
 
